@@ -6,14 +6,14 @@ body {
     color: #4a4a4a;
     display: flex;
     justify-content: center;
-    align-items: flex-start; /* Alinha no topo para ver o começo em telas pequenas */
-    padding: 10px; /* Reduz o padding geral */
+    align-items: flex-start;
+    padding: 10px;
     min-height: 100vh;
     box-sizing: border-box;
 }
 
 .agenda-container {
-    width: 100%; /* Ocupa 100% da largura disponível */
+    width: 100%;
     max-width: 900px;
     background-color: white;
     box-shadow: 0 5px 15px rgba(0,0,0,0.08);
@@ -30,158 +30,80 @@ body {
     align-items: center;
 }
 
-.header h2 {
-    margin: 0;
-    font-size: 1.2em; /* Ajusta o tamanho do título */
-}
+.header h2 { margin: 0; font-size: 1.2em; }
+.user-info { font-size: 0.9em; white-space: nowrap; }
+.user-info a { color: white; text-decoration: none; background-color: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 5px; margin-left: 10px; }
+.user-info a:hover { background-color: rgba(255,255,255,0.4); }
 
-.user-info {
-    font-size: 0.9em;
-    white-space: nowrap; /* Impede que o nome de usuário quebre linha */
-}
+.calendario { padding: 15px; }
+.mes { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+.mes h3 { margin: 0; font-size: 1.3em; color: #8d5b4c; text-align: center; }
+.mes button { background: none; border: 1px solid #ddd; border-radius: 50%; width: 35px; height: 35px; cursor: pointer; font-size: 1.4em; color: #8d5b4c; flex-shrink: 0; }
+.mes button:hover { background-color: #f1f1f1; }
 
-.user-info a {
-    color: white;
-    text-decoration: none;
-    background-color: rgba(255,255,255,0.2);
-    padding: 5px 10px;
-    border-radius: 5px;
-    margin-left: 10px;
-}
-
-.user-info a:hover {
-    background-color: rgba(255,255,255,0.4);
-}
-
-.calendario {
-    padding: 15px;
-}
-
-.mes {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.mes h3 {
-    margin: 0;
-    font-size: 1.3em;
-    color: #8d5b4c;
-    text-align: center;
-}
-
-.mes button {
-    background: none;
-    border: 1px solid #ddd;
-    border-radius: 50%;
-    width: 35px; /* Aumenta um pouco a área de clique */
-    height: 35px;
-    cursor: pointer;
-    font-size: 1.4em;
-    color: #8d5b4c;
-    flex-shrink: 0; /* Impede que os botões encolham */
-}
-
-.mes button:hover {
-    background-color: #f1f1f1;
-}
-
-.dias-semana, .dias-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    text-align: center;
-}
-
-.dias-semana div {
-    font-weight: bold;
-    padding: 8px 0;
-    color: #e89f71;
-    font-size: 0.8em; /* Nomes da semana menores */
-}
+.dias-semana, .dias-grid { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; }
+.dias-semana div { font-weight: bold; padding: 8px 0; color: #e89f71; font-size: 0.8em; }
 
 .dias-grid .dia {
-    padding: 5px 2px;
     border: 1px solid #f0f0f0;
     cursor: pointer;
     transition: background-color 0.2s;
-    min-height: 60px; /* Altura mínima menor para caber na tela */
+    min-height: 90px; /* Aumenta um pouco a altura para caber as tarefas */
     position: relative;
-    font-size: 0.9em;
-    display: flex; /* Ajuda a centralizar o número */
-    justify-content: center;
-    align-items: center;
-}
-
-.dias-grid .dia:hover {
-    background-color: #fdfaf6;
-}
-
-.dias-grid .dia.outro-mes {
-    color: #ccc;
-    cursor: default;
-    background-color: #f9f9f9;
+    padding: 4px;
+    /* ALTERADO: Organiza o conteúdo em coluna */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Alinha tudo à esquerda */
 }
 
 .dias-grid .dia .numero-dia {
-    font-size: 1em; /* Tamanho relativo ao .dia */
-}
-
-.dias-grid .dia.has-task {
-    background-color: #fdecdb; /* Cor para dias com tarefa */
     font-weight: bold;
-    border: 1px solid #e89f71;
-    color: #8d5b4c;
+    margin-bottom: 4px;
+    padding: 2px 4px;
 }
 
-.dias-grid .dia.has-task:hover {
-    background-color: #fcdfc0;
+.dias-grid .dia:hover { background-color: #fdfaf6; }
+.dias-grid .dia.outro-mes { color: #ccc; cursor: default; background-color: #f9f9f9; }
+.dias-grid .dia.has-task { background-color: #fdecdb; border: 1px solid #e89f71; color: #8d5b4c; }
+.dias-grid .dia.has-task:hover { background-color: #fcdfc0; }
+
+/* NOVO: Estilos para a lista de tarefas dentro do dia */
+.task-list {
+    width: 100%;
+    overflow: hidden; /* Esconde texto que não couber */
+    font-size: 0.75em;
+    text-align: left;
+}
+
+.task-item {
+    background-color: rgba(232, 159, 113, 0.2);
+    padding: 2px 4px;
+    border-radius: 3px;
+    margin-bottom: 2px;
+    white-space: nowrap; /* Impede que a tarefa quebre a linha */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Adiciona "..." se o texto for muito longo */
 }
 
 
-/* =============================================== */
-/* === A MÁGICA ACONTECE AQUI - ESTILOS MOBILE === */
-/* =============================================== */
-
-/* Aplica estes estilos quando a tela tem 768px de largura ou menos */
+/* === ESTILOS MOBILE === */
 @media (max-width: 768px) {
-    body {
-        padding: 0; /* Remove padding do body para a agenda colar nas bordas */
-        align-items: flex-start;
-    }
-
-    .agenda-container {
-        border-radius: 0; /* Remove bordas arredondadas para ocupar a tela toda */
-        min-height: 100vh;
-        box-shadow: none;
-    }
-
-    .header {
-        padding: 15px;
-    }
-
-    .header h2 {
-        font-size: 1.1em;
-    }
-
-    .user-info {
-        font-size: 0.8em;
-    }
-
-    .calendario {
-        padding: 10px;
-    }
-
-    .mes h3 {
-        font-size: 1.2em;
-    }
-
-    .dias-semana div {
-        font-size: 0.7em; /* Nomes da semana ainda menores */
-    }
+    body { padding: 0; align-items: flex-start; }
+    .agenda-container { border-radius: 0; min-height: 100vh; box-shadow: none; }
+    .header { padding: 15px; }
+    .header h2 { font-size: 1.1em; }
+    .user-info { font-size: 0.8em; }
+    .calendario { padding: 5px; }
+    .mes h3 { font-size: 1.2em; }
+    .dias-semana div { font-size: 0.7em; }
 
     .dias-grid .dia {
-        min-height: 50px; /* Células dos dias ainda mais compactas */
+        min-height: 70px;
         font-size: 0.8em;
+    }
+    
+    .task-list {
+        font-size: 0.7em;
     }
 }
