@@ -6,24 +6,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const prevMesBtn = document.getElementById('prev-mes');
     const nextMesBtn = document.getElementById('next-mes');
 
+    // Elementos do Modal
+    const modal = document.getElementById('modal-tarefas');
+    const modalTitulo = document.getElementById('modal-titulo');
+    const modalCorpo = document.getElementById('modal-corpo');
+    const modalFecharBtn = document.getElementById('modal-fechar');
+    const modalAdicionarBtn = document.getElementById('modal-adicionar-tarefa');
+
     let dataAtual = new Date();
+    let tarefasCache = {};
 
-    const gerarCalendario = async (ano, mes) => {
-        diasGridElement.innerHTML = '';
-        mesAnoElement.textContent = `${new Date(ano, mes).toLocaleString('pt-BR', { month: 'long' })} ${ano}`;
-
+    const fetchTarefas = async () => {
         const response = await fetch('/api/tarefas');
-        const tarefas = await response.json(); // Ex: {'2025-07-09': ['Bolo de casamento', 'Entrega doces']}
+        tarefasCache = await response.json();
+    };
 
-        let primeiroDia = new Date(ano, mes, 1).getDay();
-        let diasNoMes = new Date(ano, mes + 1, 0).getDate();
+    const gerarCalendario = () => {
+        diasGridElement.innerHTML = '';
+        mesAnoElement.textContent = `${new Date(dataAtual.getFullYear(), dataAtual.getMonth()).toLocaleString('pt-BR', { month: 'long' })} ${dataAtual.getFullYear()}`;
+
+        let primeiroDia = new Date(dataAtual.getFullYear(), dataAtual.getMonth(), 1).getDay();
+        let diasNoMes = new Date(dataAtual.getFullYear(), dataAtual.getMonth() + 1, 0).getDate();
 
         for (let i = 0; i < primeiroDia; i++) {
             diasGridElement.innerHTML += `<div class="dia outro-mes"></div>`;
         }
 
         for (let dia = 1; dia <= diasNoMes; dia++) {
-            const dataCompleta = `${ano}-${String(mes + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+            const dataCompleta = `${dataAtual.getFullYear()}-${String(dataAtual.getMonth() + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
             const diaElement = document.createElement('div');
             diaElement.className = 'dia';
 
@@ -32,73 +42,117 @@ document.addEventListener('DOMContentLoaded', () => {
             numeroDia.textContent = dia;
             diaElement.appendChild(numeroDia);
 
-            // ALTERAÇÃO PRINCIPAL: Verificar e exibir tarefas
-            if (tarefas[dataCompleta]) {
+            if (tarefasCache[dataCompleta]) {
                 diaElement.classList.add('has-task');
-
                 const taskListElement = document.createElement('div');
                 taskListElement.className = 'task-list';
-                
-                // Pega a lista de tarefas para este dia
-                const descricoes = tarefas[dataCompleta];
-                descricoes.forEach(descricao => {
+                tarefasCache[dataCompleta].forEach(tarefa => {
                     const taskItem = document.createElement('div');
                     taskItem.className = 'task-item';
-                    taskItem.textContent = descricao; // Adiciona o texto da tarefa
+                    taskItem.textContent = tarefa.descricao;
                     taskListElement.appendChild(taskItem);
                 });
                 diaElement.appendChild(taskListElement);
             }
             
-            // ALTERADO: A lógica do clique agora é mais inteligente
-            diaElement.addEventListener('click', () => {
-                const tarefasDoDia = tarefas[dataCompleta];
-                if (tarefasDoDia && tarefasDoDia.length > 0) {
-                    // Se já tem tarefas, mostra elas
-                    mostrarTarefas(dataCompleta, tarefasDoDia);
-                } else {
-                    // Se não tem, pergunta para adicionar uma nova
-                    adicionarTarefa(dataCompleta);
-                }
-            });
-            
+            diaElement.addEventListener('click', () => abrirModal(dataCompleta));
             diasGridElement.appendChild(diaElement);
         }
     };
 
-    // NOVO: Função para mostrar as tarefas em um alerta
-    const mostrarTarefas = (data, descricoes) => {
+    const abrirModal = (data) => {
         const dataFormatada = data.split('-').reverse().join('/');
-        // Junta todas as descrições da lista em uma string, cada uma com um marcador
-        const listaFormatada = descricoes.map(d => `• ${d}`).join('\n');
+        modalTitulo.textContent = `Tarefas de ${dataFormatada}`;
+        modalCorpo.innerHTML = ''; // Limpa o corpo do modal
+
+        const tarefasDoDia = tarefasCache[data] || [];
         
-        alert(`Tarefas para ${dataFormatada}:\n\n${listaFormatada}`);
+        if (tarefasDoDia.length > 0) {
+            tarefasDoDia.forEach(tarefa => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'tarefa-item-modal';
+                itemDiv.innerHTML = `
+                    <span>${tarefa.descricao}</span>
+                    <div class="botoes-acao">
+                        <button class="btn-editar" data-id="${tarefa.id}">Editar</button>
+                        <button class="btn-excluir" data-id="${tarefa.id}">Excluir</button>
+                    </div>
+                `;
+                modalCorpo.appendChild(itemDiv);
+            });
+        } else {
+            modalCorpo.innerHTML = '<p>Nenhuma tarefa para este dia.</p>';
+        }
+
+        // Adiciona eventos aos botões de editar e excluir
+        document.querySelectorAll('.btn-editar').forEach(btn => btn.addEventListener('click', (e) => editarTarefa(e.target.dataset.id)));
+        document.querySelectorAll('.btn-excluir').forEach(btn => btn.addEventListener('click', (e) => excluirTarefa(e.target.dataset.id)));
+
+        // Configura o botão de adicionar para a data atual
+        modalAdicionarBtn.onclick = () => adicionarTarefa(data);
+
+        modal.style.display = 'flex';
+    };
+
+    const fecharModal = () => {
+        modal.style.display = 'none';
     };
 
     const adicionarTarefa = async (data) => {
-        const descricao = prompt(`Adicionar tarefa para ${data.split('-').reverse().join('/')}:\n(Ex: Bolo de casamento 3 andares)`);
-        
+        const descricao = prompt(`Adicionar nova tarefa para ${data.split('-').reverse().join('/')}:`);
         if (descricao && descricao.trim() !== '') {
             await fetch('/api/tarefas', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ data: data, descricao: descricao.trim() }),
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ data, descricao: descricao.trim() }),
             });
-            gerarCalendario(dataAtual.getFullYear(), dataAtual.getMonth());
+            await atualizarCalendario();
+            fecharModal();
         }
     };
 
+    const editarTarefa = async (id) => {
+        const novaDescricao = prompt('Digite a nova descrição da tarefa:');
+        if (novaDescricao && novaDescricao.trim() !== '') {
+            await fetch(`/api/tarefas/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ descricao: novaDescricao.trim() }),
+            });
+            await atualizarCalendario();
+            fecharModal();
+        }
+    };
+
+    const excluirTarefa = async (id) => {
+        if (confirm('Tem certeza que deseja excluir esta tarefa?')) {
+            await fetch(`/api/tarefas/${id}`, { method: 'DELETE' });
+            await atualizarCalendario();
+            fecharModal();
+        }
+    };
+
+    const atualizarCalendario = async () => {
+        await fetchTarefas();
+        gerarCalendario();
+    };
+
+    // Event Listeners
     prevMesBtn.addEventListener('click', () => {
         dataAtual.setMonth(dataAtual.getMonth() - 1);
-        gerarCalendario(dataAtual.getFullYear(), dataAtual.getMonth());
+        gerarCalendario();
     });
 
     nextMesBtn.addEventListener('click', () => {
         dataAtual.setMonth(dataAtual.getMonth() + 1);
-        gerarCalendario(dataAtual.getFullYear(), dataAtual.getMonth());
+        gerarCalendario();
     });
-    
-    gerarCalendario(dataAtual.getFullYear(), dataAtual.getMonth());
+
+    modalFecharBtn.addEventListener('click', fecharModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) fecharModal(); // Fecha se clicar fora do conteúdo
+    });
+
+    // Inicia a aplicação
+    atualizarCalendario();
 });

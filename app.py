@@ -9,14 +9,11 @@ from datetime import datetime
 
 # --- CONFIGURAÇÃO INICIAL ---
 app = Flask(__name__)
-
-# Configuração do Banco de Dados SQLite
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'agenda.db')
-app.config['SECRET_KEY'] = 'sua-chave-secreta-super-dificil' # Troque por uma chave real e secreta
+app.config['SECRET_KEY'] = 'sua-chave-secreta-super-dificil'
 db = SQLAlchemy(app)
 
-# Configuração do Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
@@ -47,17 +44,12 @@ def load_user(user_id):
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
-
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        user = User.query.filter_by(username=username).first()
-        if user and user.check_password(password):
+        user = User.query.filter_by(username=request.form['username']).first()
+        if user and user.check_password(request.form['password']):
             login_user(user)
             return redirect(url_for('home'))
-        else:
-            return redirect(url_for('login'))
-            
+        return redirect(url_for('login'))
     return render_template('login.html')
 
 @app.route('/home')
@@ -76,7 +68,8 @@ def logout():
 def calendario():
     return render_template('calendario.html', username=current_user.username, show_back_button=True)
 
-# --- API PARA O CALENDÁRIO ---
+# --- API PARA O CALENDÁRIO (COM MUDANÇAS) ---
+
 @app.route('/api/tarefas', methods=['GET'])
 @login_required
 def get_tarefas():
@@ -85,17 +78,42 @@ def get_tarefas():
     for tarefa in tarefas:
         if tarefa.data not in tarefas_dict:
             tarefas_dict[tarefa.data] = []
-        tarefas_dict[tarefa.data].append(tarefa.descricao)
+        # MUDANÇA: Agora enviamos o ID e a descrição
+        tarefas_dict[tarefa.data].append({'id': tarefa.id, 'descricao': tarefa.descricao})
     return jsonify(tarefas_dict)
 
 @app.route('/api/tarefas', methods=['POST'])
 @login_required
 def add_tarefa():
     dados = request.get_json()
+    if not dados or 'data' not in dados or 'descricao' not in dados:
+        return jsonify({'status': 'erro', 'mensagem': 'Dados inválidos'}), 400
     nova_tarefa = Tarefa(data=dados['data'], descricao=dados['descricao'])
     db.session.add(nova_tarefa)
     db.session.commit()
-    return jsonify({'status': 'sucesso', 'mensagem': 'Tarefa adicionada!'})
+    return jsonify({'status': 'sucesso', 'mensagem': 'Tarefa adicionada!', 'id': nova_tarefa.id}), 201
+
+# NOVO: Rota para deletar uma tarefa
+@app.route('/api/tarefas/<int:tarefa_id>', methods=['DELETE'])
+@login_required
+def delete_tarefa(tarefa_id):
+    tarefa = Tarefa.query.get_or_404(tarefa_id)
+    db.session.delete(tarefa)
+    db.session.commit()
+    return jsonify({'status': 'sucesso', 'mensagem': 'Tarefa excluída!'})
+
+# NOVO: Rota para editar uma tarefa
+@app.route('/api/tarefas/<int:tarefa_id>', methods=['PUT'])
+@login_required
+def update_tarefa(tarefa_id):
+    tarefa = Tarefa.query.get_or_404(tarefa_id)
+    dados = request.get_json()
+    if not dados or 'descricao' not in dados:
+        return jsonify({'status': 'erro', 'mensagem': 'Descrição faltando'}), 400
+    tarefa.descricao = dados['descricao']
+    db.session.commit()
+    return jsonify({'status': 'sucesso', 'mensagem': 'Tarefa atualizada!'})
+
 
 # --- COMANDOS DE TERMINAL ---
 @app.cli.command('create-db')
@@ -108,11 +126,9 @@ def create_user():
     import click
     username = click.prompt('Digite o nome de usuário')
     password = click.prompt('Digite a senha', hide_input=True, confirmation_prompt=True)
-    
     if User.query.filter_by(username=username).first():
         print(f"Usuário '{username}' já existe.")
         return
-
     new_user = User(username=username)
     new_user.set_password(password)
     db.session.add(new_user)
