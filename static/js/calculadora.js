@@ -1,24 +1,24 @@
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('form-add-ingrediente');
     const tbody = document.getElementById('lista-ingredientes');
+    const selectUnidade = document.getElementById('unidade_medida');
+    const labelMedidaPacote = document.getElementById('label-medida-pacote');
+    const inputMedidaPacote = document.getElementById('medida_pacote');
 
-    // Função para formatar o preço em Reais (R$)
     const formatarPreco = (valor) => {
         if (valor < 0.01) {
-            // Para valores muito pequenos, mostra mais casas decimais
             return `R$ ${valor.toFixed(5)}`;
         }
         return `R$ ${valor.toFixed(2)}`;
     };
 
-    // Função para carregar e exibir os ingredientes na tabela
     const carregarIngredientes = async () => {
         try {
             const response = await fetch('/api/ingredientes');
             if (!response.ok) throw new Error('Falha ao buscar ingredientes.');
             
             const ingredientes = await response.json();
-            tbody.innerHTML = ''; // Limpa a tabela antes de preencher
+            tbody.innerHTML = '';
 
             if (ingredientes.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="4">Nenhum ingrediente cadastrado.</td></tr>';
@@ -29,8 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${ing.nome}</td>
-                    <td>${formatarPreco(ing.preco_por_grama)}</td>
-                    <td>${formatarPreco(ing.preco_pacote)} / ${ing.peso_pacote_gramas}g</td>
+                    <td>${formatarPreco(ing.preco_unidade_base)} / ${ing.unidade_medida}</td>
+                    <td>${formatarPreco(ing.preco_pacote)} / ${ing.medida_pacote}${ing.unidade_medida}</td>
                     <td>
                         <button class="button-danger" data-id="${ing.id}">
                             <i class="fa-solid fa-trash-can"></i>
@@ -45,13 +45,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Evento para adicionar um novo ingrediente
+    const atualizarFormulario = () => {
+        const unidade = selectUnidade.value;
+        if (unidade === 'g') {
+            labelMedidaPacote.textContent = 'Peso do Pacote (em gramas)';
+            inputMedidaPacote.placeholder = 'Ex: 1000 para 1kg';
+        } else if (unidade === 'ml') {
+            labelMedidaPacote.textContent = 'Volume do Pacote (em ml)';
+            inputMedidaPacote.placeholder = 'Ex: 1000 para 1L';
+        } else if (unidade === 'un') {
+            labelMedidaPacote.textContent = 'Quantidade no Pacote (unidades)';
+            inputMedidaPacote.placeholder = 'Ex: 12 (para uma dúzia)';
+        }
+    };
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const dados = {
             nome: form.nome.value,
             preco_pacote: form.preco_pacote.value,
-            peso_pacote_gramas: form.peso_pacote_gramas.value,
+            medida_pacote: form.medida_pacote.value,
+            unidade_medida: form.unidade_medida.value,
         };
 
         try {
@@ -63,37 +77,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!response.ok) throw new Error('Falha ao adicionar ingrediente.');
             
-            form.reset(); // Limpa o formulário
-            carregarIngredientes(); // Recarrega a lista
+            form.reset();
+            atualizarFormulario();
+            carregarIngredientes();
         } catch (error) {
             console.error('Erro:', error);
             alert('Não foi possível adicionar o ingrediente.');
         }
     });
 
-    // Evento para deletar um ingrediente (usando delegação de evento)
     tbody.addEventListener('click', async (e) => {
-        // Verifica se o clique foi no botão de deletar ou no ícone dentro dele
         const deleteButton = e.target.closest('.button-danger');
         if (deleteButton) {
             const id = deleteButton.dataset.id;
             if (confirm('Tem certeza que deseja remover este ingrediente?')) {
-                try {
-                    const response = await fetch(`/api/ingredientes/${id}`, {
-                        method: 'DELETE',
-                    });
-
-                    if (!response.ok) throw new Error('Falha ao remover ingrediente.');
-                    
-                    carregarIngredientes(); // Recarrega a lista
-                } catch (error) {
-                    console.error('Erro:', error);
-                    alert('Não foi possível remover o ingrediente.');
-                }
+                await fetch(`/api/ingredientes/${id}`, { method: 'DELETE' });
+                carregarIngredientes();
             }
         }
     });
 
-    // Carrega a lista inicial ao entrar na página
+    selectUnidade.addEventListener('change', atualizarFormulario);
+
+    atualizarFormulario();
     carregarIngredientes();
 });

@@ -5,6 +5,8 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
+# NOVO: Importar a biblioteca Migrate
+from flask_migrate import Migrate
 
 # --- CONFIGURAÇÃO INICIAL ---
 app = Flask(__name__)
@@ -12,11 +14,16 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'agenda.db')
 app.config['SECRET_KEY'] = 'sua-chave-secreta-super-dificil'
 db = SQLAlchemy(app)
+
+# NOVO: Inicializar o Flask-Migrate
+migrate = Migrate(app, db)
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 # --- MODELOS DO BANCO DE DADOS ---
+# (O restante do arquivo continua exatamente o mesmo)
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -33,14 +40,14 @@ class Ingrediente(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
     preco_pacote = db.Column(db.Float, nullable=False)
-    peso_pacote_gramas = db.Column(db.Float, nullable=False)
-    preco_por_grama = db.Column(db.Float, nullable=False)
+    unidade_medida = db.Column(db.String(10), nullable=False)
+    medida_pacote = db.Column(db.Float, nullable=False)
+    preco_unidade_base = db.Column(db.Float, nullable=False)
 
 class Produto(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
     custo_total = db.Column(db.Float, default=0.0)
-    # Relacionamento com os itens da receita
     receita_itens = db.relationship('ReceitaItem', backref='produto', lazy=True, cascade="all, delete-orphan")
 
 class ReceitaItem(db.Model):
@@ -49,7 +56,6 @@ class ReceitaItem(db.Model):
     custo_item = db.Column(db.Float, nullable=False)
     produto_id = db.Column(db.Integer, db.ForeignKey('produto.id'), nullable=False)
     ingrediente_id = db.Column(db.Integer, db.ForeignKey('ingrediente.id'), nullable=False)
-    # Relacionamento para acessar os dados do ingrediente facilmente
     ingrediente = db.relationship('Ingrediente', backref='receita_itens')
 
 @login_manager.user_loader
@@ -67,6 +73,8 @@ def login():
         return redirect(url_for('login'))
     return render_template('login.html')
 
+# (O resto das rotas e APIs continua o mesmo)
+# ...
 @app.route('/home')
 @login_required
 def home(): return render_template('home.html', username=current_user.username)
@@ -85,10 +93,9 @@ def calculadora(): return render_template('calculadora.html', username=current_u
 
 @app.route('/produtos')
 @login_required
-def produtos():
-    return render_template('produtos.html', username=current_user.username, show_back_button=True)
+def produtos(): return render_template('produtos.html', username=current_user.username, show_back_button=True)
 
-# --- APIs ---
+# ... (Todas as suas rotas de API) ...
 @app.route('/api/tarefas', methods=['GET'])
 @login_required
 def get_tarefas():
@@ -122,15 +129,15 @@ def delete_tarefa(tarefa_id):
 def api_ingredientes():
     if request.method == 'GET':
         ingredientes = Ingrediente.query.order_by(Ingrediente.nome).all()
-        lista_ingredientes = [{'id': ing.id, 'nome': ing.nome, 'preco_pacote': ing.preco_pacote, 'peso_pacote_gramas': ing.peso_pacote_gramas, 'preco_por_grama': ing.preco_por_grama} for ing in ingredientes]
+        lista_ingredientes = [{'id': ing.id,'nome': ing.nome,'preco_pacote': ing.preco_pacote,'medida_pacote': ing.medida_pacote,'unidade_medida': ing.unidade_medida,'preco_unidade_base': ing.preco_unidade_base} for ing in ingredientes]
         return jsonify(lista_ingredientes)
     if request.method == 'POST':
         dados = request.get_json()
         preco_pacote = float(dados['preco_pacote'])
-        peso_pacote_gramas = float(dados['peso_pacote_gramas'])
-        if peso_pacote_gramas == 0: return jsonify({'status': 'erro', 'mensagem': 'O peso não pode ser zero.'}), 400
-        preco_por_grama = preco_pacote / peso_pacote_gramas
-        novo_ingrediente = Ingrediente(nome=dados['nome'], preco_pacote=preco_pacote, peso_pacote_gramas=peso_pacote_gramas, preco_por_grama=preco_por_grama)
+        medida_pacote = float(dados['medida_pacote'])
+        if medida_pacote == 0: return jsonify({'status': 'erro', 'mensagem': 'A medida do pacote não pode ser zero.'}), 400
+        preco_unidade_base = preco_pacote / medida_pacote
+        novo_ingrediente = Ingrediente(nome=dados['nome'], preco_pacote=preco_pacote, medida_pacote=medida_pacote, unidade_medida=dados['unidade_medida'], preco_unidade_base=preco_unidade_base)
         db.session.add(novo_ingrediente)
         db.session.commit()
         return jsonify({'status': 'sucesso', 'mensagem': 'Ingrediente adicionado!'}), 201
@@ -147,43 +154,29 @@ def delete_ingrediente(id):
 @login_required
 def search_ingredientes():
     query = request.args.get('q', '')
-    if len(query) < 2:
-        return jsonify([])
+    if len(query) < 2: return jsonify([])
     ingredientes = Ingrediente.query.filter(Ingrediente.nome.ilike(f'%{query}%')).limit(10).all()
     return jsonify([{'id': ing.id, 'nome': ing.nome} for ing in ingredientes])
 
-@app.route('/api/produtos', methods=['GET'])
+@app.route('/api/produtos', methods=['GET', 'POST'])
 @login_required
-def get_produtos():
-    produtos = Produto.query.order_by(Produto.nome).all()
-    return jsonify([{'id': p.id, 'nome': p.nome} for p in produtos])
-
-@app.route('/api/produtos', methods=['POST'])
-@login_required
-def create_produto():
-    dados = request.get_json()
-    novo_produto = Produto(nome=dados['nome'])
-    db.session.add(novo_produto)
-    db.session.commit()
-    return jsonify({'id': novo_produto.id, 'nome': novo_produto.nome}), 201
+def api_produtos():
+    if request.method == 'GET':
+        produtos = Produto.query.order_by(Produto.nome).all()
+        return jsonify([{'id': p.id, 'nome': p.nome} for p in produtos])
+    if request.method == 'POST':
+        dados = request.get_json()
+        novo_produto = Produto(nome=dados['nome'])
+        db.session.add(novo_produto)
+        db.session.commit()
+        return jsonify({'id': novo_produto.id, 'nome': novo_produto.nome}), 201
 
 @app.route('/api/produtos/<int:produto_id>', methods=['GET'])
 @login_required
 def get_produto_detalhe(produto_id):
     produto = Produto.query.get_or_404(produto_id)
-    receita = [{
-        'item_id': item.id,
-        'ingrediente_nome': item.ingrediente.nome,
-        'gramas': item.gramas,
-        'custo_item': item.custo_item
-    } for item in produto.receita_itens]
-    
-    return jsonify({
-        'id': produto.id,
-        'nome': produto.nome,
-        'custo_total': produto.custo_total,
-        'receita': receita
-    })
+    receita = [{'item_id': item.id, 'ingrediente_nome': item.ingrediente.nome, 'gramas': item.gramas, 'custo_item': item.custo_item} for item in produto.receita_itens]
+    return jsonify({'id': produto.id, 'nome': produto.nome, 'custo_total': produto.custo_total, 'receita': receita})
 
 @app.route('/api/produtos/<int:produto_id>/ingredientes', methods=['POST'])
 @login_required
@@ -192,13 +185,8 @@ def add_ingrediente_receita(produto_id):
     dados = request.get_json()
     ingrediente = Ingrediente.query.get_or_404(dados['ingrediente_id'])
     gramas = float(dados['gramas'])
-    custo_do_item = ingrediente.preco_por_grama * gramas
-    novo_item_receita = ReceitaItem(
-        produto_id=produto.id,
-        ingrediente_id=ingrediente.id,
-        gramas=gramas,
-        custo_item=custo_do_item
-    )
+    custo_do_item = ingrediente.preco_unidade_base * gramas
+    novo_item_receita = ReceitaItem(produto_id=produto.id, ingrediente_id=ingrediente.id, gramas=gramas, custo_item=custo_do_item)
     db.session.add(novo_item_receita)
     produto.custo_total += custo_do_item
     db.session.commit()
@@ -213,7 +201,7 @@ def delete_receita_item(item_id):
     db.session.delete(item)
     db.session.commit()
     return jsonify({'status': 'sucesso'})
-
+    
 # --- COMANDOS DE TERMINAL ---
 @app.cli.command('create-db')
 def create_db():

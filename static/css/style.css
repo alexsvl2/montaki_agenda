@@ -191,7 +191,8 @@ body {
 
 .form-group { display: flex; flex-direction: column; }
 .form-group label { margin-bottom: 8px; font-weight: 600; font-size: 0.9em; color: #555; }
-.form-group input { padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 1em; }
+.form-group input, .form-select { padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 1em; }
+.form-select { background-color: white; }
 
 .button-primary {
     background-color: #e89f71;
