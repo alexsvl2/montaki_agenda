@@ -19,11 +19,9 @@ db = SQLAlchemy(app)
 # Configuração do Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'login' # Redireciona para a rota 'login' se não estiver logado
+login_manager.login_view = 'login'
 
 # --- MODELOS DO BANCO DE DADOS ---
-
-# Modelo de Usuário para Login
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -35,10 +33,9 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-# Modelo de Tarefa para a Agenda
 class Tarefa(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    data = db.Column(db.String(10), nullable=False) # Formato 'YYYY-MM-DD'
+    data = db.Column(db.String(10), nullable=False)
     descricao = db.Column(db.String(200), nullable=False)
 
 @login_manager.user_loader
@@ -46,11 +43,10 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 # --- ROTAS DA APLICAÇÃO ---
-
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for('calendario'))
+        return redirect(url_for('home'))
 
     if request.method == 'POST':
         username = request.form['username']
@@ -58,12 +54,16 @@ def login():
         user = User.query.filter_by(username=username).first()
         if user and user.check_password(password):
             login_user(user)
-            return redirect(url_for('calendario'))
+            return redirect(url_for('home'))
         else:
-            # Futuramente, adicione uma mensagem de erro aqui
             return redirect(url_for('login'))
             
     return render_template('login.html')
+
+@app.route('/home')
+@login_required
+def home():
+    return render_template('home.html', username=current_user.username)
 
 @app.route('/logout')
 @login_required
@@ -74,22 +74,19 @@ def logout():
 @app.route('/calendario')
 @login_required
 def calendario():
-    return render_template('calendario.html', username=current_user.username)
+    return render_template('calendario.html', username=current_user.username, show_back_button=True)
 
-# --- API PARA O CALENDÁRIO (JavaScript vai usar isso) ---
-
+# --- API PARA O CALENDÁRIO ---
 @app.route('/api/tarefas', methods=['GET'])
 @login_required
 def get_tarefas():
     tarefas = Tarefa.query.all()
-    # Transforma a lista de tarefas em um dicionário onde a chave é a data
     tarefas_dict = {}
     for tarefa in tarefas:
         if tarefa.data not in tarefas_dict:
             tarefas_dict[tarefa.data] = []
         tarefas_dict[tarefa.data].append(tarefa.descricao)
     return jsonify(tarefas_dict)
-
 
 @app.route('/api/tarefas', methods=['POST'])
 @login_required
@@ -100,23 +97,18 @@ def add_tarefa():
     db.session.commit()
     return jsonify({'status': 'sucesso', 'mensagem': 'Tarefa adicionada!'})
 
-
-# --- COMANDO PARA CRIAR O PRIMEIRO USUÁRIO ---
-# No terminal, rode: flask create-db e depois flask create-user admin senha_segura
+# --- COMANDOS DE TERMINAL ---
 @app.cli.command('create-db')
 def create_db():
-    """Cria as tabelas do banco de dados."""
     db.create_all()
     print("Banco de dados criado com sucesso!")
 
 @app.cli.command('create-user')
 def create_user():
-    """Cria um usuário administrador."""
     import click
     username = click.prompt('Digite o nome de usuário')
     password = click.prompt('Digite a senha', hide_input=True, confirmation_prompt=True)
     
-    # Verifica se o usuário já existe
     if User.query.filter_by(username=username).first():
         print(f"Usuário '{username}' já existe.")
         return
@@ -126,7 +118,6 @@ def create_user():
     db.session.add(new_user)
     db.session.commit()
     print(f"Usuário '{username}' criado com sucesso!")
-
 
 if __name__ == '__main__':
     app.run(debug=True)

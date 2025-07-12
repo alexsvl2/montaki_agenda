@@ -12,7 +12,7 @@ body {
     box-sizing: border-box;
 }
 
-.agenda-container {
+.agenda-container, .dashboard-container {
     width: 100%;
     max-width: 900px;
     background-color: white;
@@ -48,62 +48,88 @@ body {
     border: 1px solid #f0f0f0;
     cursor: pointer;
     transition: background-color 0.2s;
-    min-height: 90px; /* Aumenta um pouco a altura para caber as tarefas */
+    min-height: 90px;
     position: relative;
     padding: 4px;
-    /* ALTERADO: Organiza o conteúdo em coluna */
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Alinha tudo à esquerda */
+    align-items: flex-start;
 }
 
-.dias-grid .dia .numero-dia {
-    font-weight: bold;
-    margin-bottom: 4px;
-    padding: 2px 4px;
-}
-
+.dias-grid .dia .numero-dia { font-weight: bold; margin-bottom: 4px; padding: 2px 4px; }
 .dias-grid .dia:hover { background-color: #fdfaf6; }
 .dias-grid .dia.outro-mes { color: #ccc; cursor: default; background-color: #f9f9f9; }
 .dias-grid .dia.has-task { background-color: #fdecdb; border: 1px solid #e89f71; color: #8d5b4c; }
 .dias-grid .dia.has-task:hover { background-color: #fcdfc0; }
 
-/* NOVO: Estilos para a lista de tarefas dentro do dia */
-.task-list {
-    width: 100%;
-    overflow: hidden; /* Esconde texto que não couber */
-    font-size: 0.75em;
-    text-align: left;
+.task-list { width: 100%; overflow: hidden; font-size: 0.75em; text-align: left; }
+.task-item { background-color: rgba(232, 159, 113, 0.2); padding: 2px 4px; border-radius: 3px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+
+/* ================================== */
+/* === ESTILOS PARA O DASHBOARD === */
+/* ================================== */
+
+.dashboard-menu {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 60px 20px;
+    gap: 30px;
 }
 
-.task-item {
-    background-color: rgba(232, 159, 113, 0.2);
-    padding: 2px 4px;
-    border-radius: 3px;
-    margin-bottom: 2px;
-    white-space: nowrap; /* Impede que a tarefa quebre a linha */
-    overflow: hidden;
-    text-overflow: ellipsis; /* Adiciona "..." se o texto for muito longo */
+.menu-link { text-decoration: none; color: inherit; }
+
+.menu-item {
+    width: 180px;
+    height: 160px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
+
+.menu-item:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
+.menu-item i { font-size: 48px; margin-bottom: 15px; }
+.menu-item span { font-size: 1.1em; font-weight: 600; }
+
+/* --- Cores dos Itens do Menu --- */
+.menu-item.agenda { background-color: #fdecdb; color: #c57d56; }
+.menu-item.agenda:hover { background-color: #fcdfc0; }
+
+.menu-item.calculadora { background-color: #ffeff2; color: #e598aa; }
+.menu-item.calculadora:hover { background-color: #ffdee4; }
+
+.menu-item.produtos { background-color: #faebd7; color: #a0522d; }
+.menu-item.produtos:hover { background-color: #f8e1c6; }
+
+/* Estilo para o botão de voltar na agenda */
+.back-button { font-size: 2em; color: white; text-decoration: none; margin-right: 15px; transition: transform 0.2s; }
+.back-button:hover { transform: scale(1.1); }
 
 
 /* === ESTILOS MOBILE === */
 @media (max-width: 768px) {
     body { padding: 0; align-items: flex-start; }
-    .agenda-container { border-radius: 0; min-height: 100vh; box-shadow: none; }
+    .agenda-container, .dashboard-container { border-radius: 0; min-height: 100vh; box-shadow: none; }
     .header { padding: 15px; }
     .header h2 { font-size: 1.1em; }
     .user-info { font-size: 0.8em; }
+    
+    /* Mobile para Agenda */
     .calendario { padding: 5px; }
     .mes h3 { font-size: 1.2em; }
     .dias-semana div { font-size: 0.7em; }
+    .dias-grid .dia { min-height: 70px; font-size: 0.8em; }
+    .task-list { font-size: 0.7em; }
 
-    .dias-grid .dia {
-        min-height: 70px;
-        font-size: 0.8em;
-    }
-    
-    .task-list {
-        font-size: 0.7em;
-    }
+    /* Mobile para Dashboard */
+    .dashboard-menu { flex-direction: column; padding: 40px 20px; gap: 20px; }
+    .menu-item { width: 100%; max-width: 250px; height: 120px; }
+    .menu-item i { font-size: 36px; }
 }

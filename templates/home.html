@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Principal - Montaki Confeitaria</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="header">
+            <h2>Montaki Confeitaria</h2>
+            <div class="user-info">
+                <span>Olá, {{ username }}!</span>
+                <a href="{{ url_for('logout') }}">Sair</a>
+            </div>
+        </div>
+
+        <div class="dashboard-menu">
+            <a href="{{ url_for('calendario') }}" class="menu-link">
+                <div class="menu-item agenda">
+                    <i class="fa-solid fa-calendar-days"></i>
+                    <span>Agenda</span>
+                </div>
+            </a>
+
+            <a href="#" class="menu-link">
+                <div class="menu-item calculadora">
+                    <i class="fa-solid fa-calculator"></i>
+                    <span>Calculadora</span>
+                </div>
+            </a>
+
+            <a href="#" class="menu-link">
+                <div class="menu-item produtos">
+                    <i class="fa-solid fa-cake-candles"></i>
+                    <span>Produtos</span>
+                </div>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
