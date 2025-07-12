@@ -5,7 +5,6 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-# NOVO: Importar a biblioteca Migrate
 from flask_migrate import Migrate
 
 # --- CONFIGURAÇÃO INICIAL ---
@@ -14,16 +13,12 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'agenda.db')
 app.config['SECRET_KEY'] = 'sua-chave-secreta-super-dificil'
 db = SQLAlchemy(app)
-
-# NOVO: Inicializar o Flask-Migrate
 migrate = Migrate(app, db)
-
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 # --- MODELOS DO BANCO DE DADOS ---
-# (O restante do arquivo continua exatamente o mesmo)
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -63,7 +58,10 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 # --- ROTAS PRINCIPAIS ---
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
+def index(): return redirect(url_for('login'))
+
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated: return redirect(url_for('home'))
     if request.method == 'POST':
@@ -73,8 +71,6 @@ def login():
         return redirect(url_for('login'))
     return render_template('login.html')
 
-# (O resto das rotas e APIs continua o mesmo)
-# ...
 @app.route('/home')
 @login_required
 def home(): return render_template('home.html', username=current_user.username)
@@ -95,7 +91,7 @@ def calculadora(): return render_template('calculadora.html', username=current_u
 @login_required
 def produtos(): return render_template('produtos.html', username=current_user.username, show_back_button=True)
 
-# ... (Todas as suas rotas de API) ...
+# --- APIs ---
 @app.route('/api/tarefas', methods=['GET'])
 @login_required
 def get_tarefas():
@@ -116,6 +112,17 @@ def add_tarefa():
     db.session.commit()
     return jsonify({'status': 'sucesso', 'mensagem': 'Tarefa adicionada!'}), 201
 
+@app.route('/api/tarefas/<int:tarefa_id>', methods=['PUT'])
+@login_required
+def update_tarefa(tarefa_id):
+    tarefa = Tarefa.query.get_or_404(tarefa_id)
+    dados = request.get_json()
+    if 'descricao' not in dados:
+        return jsonify({'status': 'erro', 'mensagem': 'Descrição não fornecida'}), 400
+    tarefa.descricao = dados['descricao']
+    db.session.commit()
+    return jsonify({'status': 'sucesso', 'mensagem': 'Tarefa atualizada!'})
+
 @app.route('/api/tarefas/<int:tarefa_id>', methods=['DELETE'])
 @login_required
 def delete_tarefa(tarefa_id):
@@ -135,7 +142,7 @@ def api_ingredientes():
         dados = request.get_json()
         preco_pacote = float(dados['preco_pacote'])
         medida_pacote = float(dados['medida_pacote'])
-        if medida_pacote == 0: return jsonify({'status': 'erro', 'mensagem': 'A medida do pacote não pode ser zero.'}), 400
+        if medida_pacote == 0: return jsonify({'status': 'erro', 'mensagem': 'O peso não pode ser zero.'}), 400
         preco_unidade_base = preco_pacote / medida_pacote
         novo_ingrediente = Ingrediente(nome=dados['nome'], preco_pacote=preco_pacote, medida_pacote=medida_pacote, unidade_medida=dados['unidade_medida'], preco_unidade_base=preco_unidade_base)
         db.session.add(novo_ingrediente)

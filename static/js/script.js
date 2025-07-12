@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 tarefasDoDia.forEach(tarefa => {
                     const taskItem = document.createElement('div');
                     taskItem.className = 'task-item';
-                    taskItem.textContent = tarefa.desc; // ALTERADO: Usa tarefa.desc
+                    taskItem.textContent = tarefa.desc;
                     taskListElement.appendChild(taskItem);
                 });
                 diaElement.appendChild(taskListElement);
@@ -56,18 +56,24 @@ document.addEventListener('DOMContentLoaded', () => {
         dataSelecionadaParaAdicionar = data;
         const dataFormatada = data.split('-').reverse().join('/');
         modalTitulo.textContent = `Tarefas para ${dataFormatada}`;
-        modalCorpo.innerHTML = ''; // Limpa o corpo da modal
+        modalCorpo.innerHTML = '';
 
         if (tarefas.length > 0) {
             const ul = document.createElement('ul');
             ul.className = 'lista-tarefas-modal';
             tarefas.forEach(tarefa => {
                 const li = document.createElement('li');
+                li.dataset.tarefaId = tarefa.id; // Guarda o ID no elemento li
                 li.innerHTML = `
-                    <span>${tarefa.desc}</span>
-                    <button class="button-danger button-delete-tarefa" data-id="${tarefa.id}">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
+                    <span class="tarefa-texto">${tarefa.desc}</span>
+                    <div class="tarefa-botoes">
+                        <button class="button-icon button-edit-tarefa">
+                            <i class="fa-solid fa-pencil"></i>
+                        </button>
+                        <button class="button-icon button-danger button-delete-tarefa">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
                 `;
                 ul.appendChild(li);
             });
@@ -82,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.style.display = 'none';
     };
 
-    // --- FUNÇÕES DE API (Adicionar/Excluir) ---
+    // --- FUNÇÕES DE API (Adicionar/Editar/Excluir) ---
     const adicionarTarefa = async (data) => {
         const descricao = prompt(`Adicionar tarefa para ${data.split('-').reverse().join('/')}:`);
         if (descricao && descricao.trim() !== '') {
@@ -103,7 +109,17 @@ document.addEventListener('DOMContentLoaded', () => {
             gerarCalendario(dataAtual.getFullYear(), dataAtual.getMonth());
         }
     };
-
+    
+    const salvarEdicaoTarefa = async (tarefaId, novoTexto) => {
+        await fetch(`/api/tarefas/${tarefaId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ descricao: novoTexto }),
+        });
+        fecharModal();
+        gerarCalendario(dataAtual.getFullYear(), dataAtual.getMonth());
+    };
+    
     // --- EVENT LISTENERS ---
     prevMesBtn.addEventListener('click', () => {
         dataAtual.setMonth(dataAtual.getMonth() - 1);
@@ -116,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     modalFecharBtn.addEventListener('click', fecharModal);
-    modal.addEventListener('click', (e) => { // Fecha se clicar fora do conteúdo
+    modal.addEventListener('click', (e) => {
         if (e.target === modal) fecharModal();
     });
 
@@ -124,12 +140,39 @@ document.addEventListener('DOMContentLoaded', () => {
         adicionarTarefa(dataSelecionadaParaAdicionar);
     });
     
-    // Delegação de evento para o botão de excluir
     modalCorpo.addEventListener('click', (e) => {
         const deleteButton = e.target.closest('.button-delete-tarefa');
         if (deleteButton) {
-            const tarefaId = deleteButton.dataset.id;
+            const tarefaId = deleteButton.closest('li').dataset.tarefaId;
             excluirTarefa(tarefaId);
+            return;
+        }
+
+        const editButton = e.target.closest('.button-edit-tarefa');
+        if (editButton) {
+            const li = editButton.closest('li');
+            const tarefaId = li.dataset.tarefaId;
+            const spanTexto = li.querySelector('.tarefa-texto');
+            const textoAtual = spanTexto.textContent;
+            
+            // Substitui o texto por um campo de input
+            li.innerHTML = `
+                <input type="text" class="tarefa-edit-input" value="${textoAtual}">
+                <button class="button-icon button-save-tarefa">
+                    <i class="fa-solid fa-check"></i>
+                </button>
+            `;
+            li.querySelector('.tarefa-edit-input').focus();
+            return;
+        }
+        
+        const saveButton = e.target.closest('.button-save-tarefa');
+        if (saveButton) {
+            const li = saveButton.closest('li');
+            const tarefaId = li.dataset.tarefaId;
+            const input = li.querySelector('.tarefa-edit-input');
+            const novoTexto = input.value;
+            salvarEdicaoTarefa(tarefaId, novoTexto);
         }
     });
 

@@ -295,13 +295,41 @@ tr:hover { background-color: #fefcf9; }
     border-bottom: none;
 }
 
-.lista-tarefas-modal li span {
+.lista-tarefas-modal li span.tarefa-texto {
     flex-grow: 1;
+    margin-right: 10px;
 }
 
-.button-delete-tarefa {
-    margin-left: 15px;
+.tarefa-botoes {
+    display: flex;
+    gap: 10px;
 }
+
+.button-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1em;
+    padding: 5px;
+    color: #888;
+}
+
+.button-icon:hover {
+    color: #333;
+}
+
+.button-icon.button-danger:hover {
+    color: #c0392b;
+}
+
+.tarefa-edit-input {
+    flex-grow: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
 
 .modal-footer {
     border-top: 1px solid #eee;
