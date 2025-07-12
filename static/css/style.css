@@ -450,10 +450,11 @@ tr:hover { background-color: #fefcf9; }
     .header h2 { font-size: 1.1em; }
     .user-info { font-size: 0.8em; }
 
-    /* Mobile para Dashboard */
-    .dashboard-menu { flex-direction: column; padding: 40px 20px; gap: 20px; }
-    .menu-item { width: 100%; max-width: 250px; height: 120px; }
-    .menu-item i { font-size: 36px; }
+    /* Mobile para Dashboard com ícones maiores */
+    .dashboard-menu { flex-direction: column; padding: 40px 20px; gap: 30px; }
+    .menu-item { width: 100%; max-width: 250px; height: 140px; }
+    .menu-item i { font-size: 42px; }
+    .menu-item span { font-size: 1.2em; }
     
     /* Mobile para Agenda */
     .calendario { padding: 5px; }
