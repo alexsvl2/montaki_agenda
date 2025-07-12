@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Custos - Montaki</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+    <div class="page-container">
+        <div class="header">
+            {% if show_back_button %}
+                <a href="{{ url_for('home') }}" class="back-button" title="Voltar ao Menu">&#x2190;</a>
+            {% endif %}
+            <h2>Calculadora de Custos</h2>
+            <div class="user-info">
+                <span>Olá, {{ username }}!</span>
+                <a href="{{ url_for('logout') }}">Sair</a>
+            </div>
+        </div>
+
+        <main class="content-wrapper">
+            <div class="card">
+                <h3>Cadastrar Novo Ingrediente</h3>
+                <form id="form-add-ingrediente" class="form-grid">
+                    <div class="form-group">
+                        <label for="nome">Nome do Ingrediente</label>
+                        <input type="text" id="nome" name="nome" placeholder="Ex: Farinha de Trigo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="preco_pacote">Preço do Pacote (R$)</label>
+                        <input type="number" id="preco_pacote" name="preco_pacote" step="0.01" placeholder="Ex: 5.50" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="peso_pacote_gramas">Peso do Pacote (em gramas)</label>
+                        <input type="number" id="peso_pacote_gramas" name="peso_pacote_gramas" step="0.01" placeholder="Ex: 1000 para 1kg" required>
+                    </div>
+                    <button type="submit" class="button-primary">Adicionar</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3>Ingredientes Cadastrados</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ingrediente</th>
+                                <th>Preço/Grama (R$)</th>
+                                <th>Detalhes do Pacote</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lista-ingredientes">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/calculadora.js') }}"></script>
+</body>
+</html>

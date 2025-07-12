@@ -1,5 +1,9 @@
 /* /montaki_agenda/static/css/style.css */
 
+/* ======================================= */
+/* === ESTILOS GERAIS E COMPARTILHADOS === */
+/* ======================================= */
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #fdfaf6;
@@ -10,11 +14,12 @@ body {
     padding: 10px;
     min-height: 100vh;
     box-sizing: border-box;
+    margin: 0;
 }
 
-.agenda-container, .dashboard-container {
+.agenda-container, .dashboard-container, .page-container {
     width: 100%;
-    max-width: 900px;
+    max-width: 1100px; /* Aumentado para acomodar páginas mais largas como a calculadora */
     background-color: white;
     box-shadow: 0 5px 15px rgba(0,0,0,0.08);
     border-radius: 10px;
@@ -30,10 +35,100 @@ body {
     align-items: center;
 }
 
-.header h2 { margin: 0; font-size: 1.2em; }
-.user-info { font-size: 0.9em; white-space: nowrap; }
-.user-info a { color: white; text-decoration: none; background-color: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 5px; margin-left: 10px; }
-.user-info a:hover { background-color: rgba(255,255,255,0.4); }
+.header h2 {
+    margin: 0;
+    font-size: 1.2em;
+}
+
+.user-info {
+    font-size: 0.9em;
+    white-space: nowrap;
+}
+
+.user-info a {
+    color: white;
+    text-decoration: none;
+    background-color: rgba(255,255,255,0.2);
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-left: 10px;
+}
+
+.user-info a:hover {
+    background-color: rgba(255,255,255,0.4);
+}
+
+.back-button {
+    font-size: 2em;
+    color: white;
+    text-decoration: none;
+    margin-right: 15px;
+    transition: transform 0.2s;
+}
+
+.back-button:hover {
+    transform: scale(1.1);
+}
+
+/* ================================== */
+/* === ESTILOS PARA O DASHBOARD === */
+/* ================================== */
+
+.dashboard-menu {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 60px 20px;
+    gap: 30px;
+}
+
+.menu-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.menu-item {
+    width: 180px;
+    height: 160px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.menu-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+}
+
+.menu-item i {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+.menu-item span {
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+/* --- Cores dos Itens do Menu --- */
+.menu-item.agenda { background-color: #fdecdb; color: #c57d56; }
+.menu-item.agenda:hover { background-color: #fcdfc0; }
+
+.menu-item.calculadora { background-color: #ffeff2; color: #e598aa; }
+.menu-item.calculadora:hover { background-color: #ffdee4; }
+
+.menu-item.produtos { background-color: #faebd7; color: #a0522d; }
+.menu-item.produtos:hover { background-color: #f8e1c6; }
+
+/* ================================ */
+/* === ESTILOS PARA A AGENDA === */
+/* ================================ */
 
 .calendario { padding: 15px; }
 .mes { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
@@ -65,130 +160,85 @@ body {
 .task-list { width: 100%; overflow: hidden; font-size: 0.75em; text-align: left; }
 .task-item { background-color: rgba(232, 159, 113, 0.2); padding: 2px 4px; border-radius: 3px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-/* ================================== */
-/* === ESTILOS PARA O DASHBOARD === */
-/* ================================== */
+/* ======================================= */
+/* === ESTILOS PARA PÁGINA CALCULADORA === */
+/* ======================================= */
 
-.dashboard-menu {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    padding: 60px 20px;
-    gap: 30px;
-}
+.content-wrapper { padding: 20px 30px; }
 
-.menu-link { text-decoration: none; color: inherit; }
-
-.menu-item {
-    width: 180px;
-    height: 160px;
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-
-.menu-item:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
-.menu-item i { font-size: 48px; margin-bottom: 15px; }
-.menu-item span { font-size: 1.1em; font-weight: 600; }
-.menu-item.agenda { background-color: #fdecdb; color: #c57d56; }
-.menu-item.agenda:hover { background-color: #fcdfc0; }
-.menu-item.calculadora { background-color: #ffeff2; color: #e598aa; }
-.menu-item.calculadora:hover { background-color: #ffdee4; }
-.menu-item.produtos { background-color: #faebd7; color: #a0522d; }
-.menu-item.produtos:hover { background-color: #f8e1c6; }
-.back-button { font-size: 2em; color: white; text-decoration: none; margin-right: 15px; transition: transform 0.2s; }
-.back-button:hover { transform: scale(1.1); }
-
-/* ================================== */
-/* === ESTILOS PARA O MODAL === */
-/* ================================== */
-
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.modal-content {
-    background-color: #fff;
-    padding: 25px;
+.card {
+    background-color: #fdfdfd;
+    border: 1px solid #f0f0f0;
     border-radius: 8px;
-    width: 90%;
-    max-width: 500px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    padding: 25px;
+    margin-bottom: 30px;
 }
 
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 15px;
-    margin-bottom: 15px;
+.card h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #8d5b4c;
+    border-bottom: 2px solid #fdecdb;
+    padding-bottom: 10px;
 }
 
-.modal-header h3 { margin: 0; color: #8d5b4c; }
-.modal-fechar-btn { background: none; border: none; font-size: 2em; cursor: pointer; color: #aaa; line-height: 1; }
-
-.modal-corpo .tarefa-item-modal {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border-radius: 5px;
-    margin-bottom: 8px;
-    background-color: #fdfaf6;
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    align-items: flex-end;
 }
 
-.tarefa-item-modal span { flex-grow: 1; }
-.tarefa-item-modal .botoes-acao button {
-    background: none;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 5px 8px;
-    margin-left: 5px;
-    cursor: pointer;
-}
-.tarefa-item-modal .botoes-acao .btn-editar { color: #5a8dcc; }
-.tarefa-item-modal .botoes-acao .btn-excluir { color: #d9534f; }
+.form-group { display: flex; flex-direction: column; }
+.form-group label { margin-bottom: 8px; font-weight: 600; font-size: 0.9em; color: #555; }
+.form-group input { padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 1em; }
 
-.modal-footer {
-    border-top: 1px solid #eee;
-    padding-top: 15px;
-    margin-top: 15px;
-    text-align: right;
-}
-
-.btn-adicionar {
+.button-primary {
     background-color: #e89f71;
     color: white;
-    padding: 10px 15px;
+    padding: 12px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 1em;
+    font-weight: 600;
+    transition: background-color 0.2s;
 }
-.btn-adicionar:hover { background-color: #d18e64; }
 
-/* === ESTILOS MOBILE === */
+.button-primary:hover { background-color: #d18e64; }
+
+.table-container { overflow-x: auto; }
+
+table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #f0f0f0; }
+th { background-color: #fdfaf6; font-weight: 600; color: #8d5b4c; }
+tr:last-child td { border-bottom: none; }
+tr:hover { background-color: #fefcf9; }
+
+.button-danger { background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 1.2em; padding: 5px; }
+.button-danger:hover { color: #c0392b; }
+
+/* ======================================= */
+/* === ESTILOS MOBILE (MEDIA QUERIES) === */
+/* ======================================= */
+
 @media (max-width: 768px) {
     body { padding: 0; align-items: flex-start; }
-    .agenda-container, .dashboard-container { border-radius: 0; min-height: 100vh; box-shadow: none; }
+    
+    .agenda-container, .dashboard-container, .page-container {
+        border-radius: 0;
+        min-height: 100vh;
+        box-shadow: none;
+    }
+
     .header { padding: 15px; }
     .header h2 { font-size: 1.1em; }
     .user-info { font-size: 0.8em; }
+
+    /* Mobile para Dashboard */
+    .dashboard-menu { flex-direction: column; padding: 40px 20px; gap: 20px; }
+    .menu-item { width: 100%; max-width: 250px; height: 120px; }
+    .menu-item i { font-size: 36px; }
     
     /* Mobile para Agenda */
     .calendario { padding: 5px; }
@@ -197,12 +247,7 @@ body {
     .dias-grid .dia { min-height: 70px; font-size: 0.8em; }
     .task-list { font-size: 0.7em; }
 
-    /* Mobile para Dashboard */
-    .dashboard-menu { display: grid; grid-template-columns: 1fr 1fr; padding: 25px; gap: 20px; }
-    .menu-item { width: auto; max-width: none; height: 140px; border-radius: 10px; }
-    .menu-item i { font-size: 40px; margin-bottom: 12px; }
-    .menu-item span { font-size: 1em; }
-
-    /* Mobile para Modal */
-    .modal-content { padding: 15px; }
+    /* Mobile para Calculadora */
+    .content-wrapper { padding: 15px; }
+    .form-grid { grid-template-columns: 1fr; }
 }
