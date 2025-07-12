@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agenda - Montaki Confeitaria</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body>
     <div class="agenda-container">
@@ -18,7 +19,6 @@
                 <a href="{{ url_for('logout') }}">Sair</a>
             </div>
         </div>
-        
         <div class="calendario">
             <div class="mes">
                 <button id="prev-mes">&lt;</button>
@@ -28,8 +28,21 @@
             <div class="dias-semana">
                 <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
             </div>
-            <div class="dias-grid" id="dias-grid">
+            <div class="dias-grid" id="dias-grid"></div>
+        </div>
+    </div>
+
+    <div id="modal-tarefas" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-titulo">Tarefas do dia</h3>
+                <button id="modal-fechar" class="modal-close-btn">&times;</button>
+            </div>
+            <div id="modal-corpo" class="modal-body">
                 </div>
+            <div class="modal-footer">
+                <button id="modal-adicionar-tarefa" class="button-primary">Adicionar Nova Tarefa</button>
+            </div>
         </div>
     </div>
 
