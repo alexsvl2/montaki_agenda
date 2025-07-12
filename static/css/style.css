@@ -1,0 +1,123 @@
+/* /montaki_agenda/static/css/style.css */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #fdfaf6;
+    color: #4a4a4a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.agenda-container {
+    width: 95%;
+    max-width: 900px;
+    background-color: white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.header {
+    background-color: #8d5b4c;
+    color: white;
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h2 {
+    margin: 0;
+}
+
+.user-info a {
+    color: white;
+    text-decoration: none;
+    background-color: rgba(255,255,255,0.2);
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-left: 15px;
+    font-size: 0.9em;
+}
+
+.user-info a:hover {
+    background-color: rgba(255,255,255,0.4);
+}
+
+.calendario {
+    padding: 20px;
+}
+
+.mes {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.mes h3 {
+    margin: 0;
+    font-size: 1.5em;
+    color: #8d5b4c;
+}
+
+.mes button {
+    background: none;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-size: 1.2em;
+    color: #8d5b4c;
+}
+
+.mes button:hover {
+    background-color: #f1f1f1;
+}
+
+.dias-semana, .dias-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+}
+
+.dias-semana div {
+    font-weight: bold;
+    padding: 10px 0;
+    color: #e89f71;
+}
+
+.dias-grid .dia {
+    padding: 15px 5px;
+    border: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    min-height: 80px;
+    position: relative;
+}
+
+.dias-grid .dia:hover {
+    background-color: #fdfaf6;
+}
+
+.dias-grid .dia.outro-mes {
+    color: #ccc;
+    cursor: default;
+}
+
+.dias-grid .dia .numero-dia {
+    font-size: 0.9em;
+}
+
+.dias-grid .dia.has-task {
+    background-color: #fdecdb; /* Cor para dias com tarefa */
+    font-weight: bold;
+    border: 1px solid #e89f71;
+}
+
+.dias-grid .dia.has-task:hover {
+    background-color: #fcdfc0;
+}

@@ -1,0 +1,6 @@
+# /montaki_agenda/requirements.txt
+
+Flask
+Flask-SQLAlchemy
+Flask-Login
+Werkzeug

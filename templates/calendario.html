@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda - Montaki Confeitaria</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="agenda-container">
+        <div class="header">
+            <h2>Agenda Montaki</h2>
+            <div class="user-info">
+                <span>Olá, {{ username }}!</span>
+                <a href="{{ url_for('logout') }}">Sair</a>
+            </div>
+        </div>
+        
+        <div class="calendario">
+            <div class="mes">
+                <button id="prev-mes">&lt;</button>
+                <h3 id="mes-ano"></h3>
+                <button id="next-mes">&gt;</button>
+            </div>
+            <div class="dias-semana">
+                <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
+            </div>
+            <div class="dias-grid" id="dias-grid">
+                </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
