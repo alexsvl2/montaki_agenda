@@ -128,8 +128,29 @@ body {
     .dias-grid .dia { min-height: 70px; font-size: 0.8em; }
     .task-list { font-size: 0.7em; }
 
-    /* Mobile para Dashboard */
-    .dashboard-menu { flex-direction: column; padding: 40px 20px; gap: 20px; }
-    .menu-item { width: 100%; max-width: 250px; height: 120px; }
-    .menu-item i { font-size: 36px; }
+    /* ========================================================= */
+    /* === MUDANÇAS AQUI: Ajustes finos para o Dashboard Mobile === */
+    /* ========================================================= */
+    .dashboard-menu {
+        display: grid; /* Usamos grid para um alinhamento perfeito */
+        grid-template-columns: 1fr 1fr; /* Duas colunas de tamanho igual */
+        padding: 25px; /* Menos espaço nas bordas */
+        gap: 20px; /* Espaço entre os ícones */
+    }
+
+    .menu-item {
+        width: auto; /* A largura se ajusta à coluna do grid */
+        max-width: none; /* Removemos a largura máxima anterior */
+        height: 140px; /* Uma altura mais proporcional */
+        border-radius: 10px;
+    }
+
+    .menu-item i {
+        font-size: 40px; /* Ícones um pouco menores e mais delicados */
+        margin-bottom: 12px; /* Espaço ajustado entre ícone e texto */
+    }
+    
+    .menu-item span {
+        font-size: 1em; /* Tamanho da fonte do texto ajustado */
+    }
 }
