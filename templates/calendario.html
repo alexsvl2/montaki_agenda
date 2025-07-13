@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body>
-    <div class="agenda-container">
+    <div class="page-container" style="max-width: 1400px;">
         <div class="header">
             {% if show_back_button %}
                 <a href="{{ url_for('home') }}" class="back-button" title="Voltar ao Menu">&#x2190;</a>
@@ -19,30 +19,28 @@
                 <a href="{{ url_for('logout') }}">Sair</a>
             </div>
         </div>
-        <div class="calendario">
-            <div class="mes">
-                <button id="prev-mes">&lt;</button>
-                <h3 id="mes-ano"></h3>
-                <button id="next-mes">&gt;</button>
-            </div>
-            <div class="dias-semana">
-                <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
-            </div>
-            <div class="dias-grid" id="dias-grid"></div>
-        </div>
-    </div>
-
-    <div id="modal-tarefas" class="modal-overlay" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modal-titulo">Tarefas do dia</h3>
-                <button id="modal-fechar" class="modal-close-btn">&times;</button>
-            </div>
-            <div id="modal-corpo" class="modal-body">
+        
+        <div class="agenda-layout">
+            <main class="calendario-principal">
+                <div class="mes">
+                    <button id="prev-mes">&lt;</button>
+                    <h3 id="mes-ano"></h3>
+                    <button id="next-mes">&gt;</button>
                 </div>
-            <div class="modal-footer">
-                <button id="modal-adicionar-tarefa" class="button-primary">Adicionar Nova Tarefa</button>
-            </div>
+                <div class="dias-semana">
+                    <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
+                </div>
+                <div class="dias-grid" id="dias-grid">
+                    </div>
+            </main>
+    
+            <aside class="painel-tarefas">
+                <h4>Tarefas para <span id="data-selecionada-painel">--/--/----</span></h4>
+                <div id="lista-tarefas-painel" class="lista-tarefas-container">
+                    <p>Nenhuma tarefa para este dia.</p>
+                </div>
+                <button id="btn-adicionar-tarefa-painel" class="button-primary">Adicionar Nova Tarefa</button>
+            </aside>
         </div>
     </div>
 
