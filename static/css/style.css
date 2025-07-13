@@ -66,7 +66,7 @@ body {
 .dias-grid .dia .numero-dia { font-weight: bold; margin-bottom: 4px; padding: 2px 4px; }
 .dias-grid .dia:hover { background-color: #fdfaf6; }
 .dias-grid .dia.outro-mes { color: #ccc; cursor: default; background-color: #f9f9f9; }
-.dias-grid .dia.has-task { background-color: #fdecdb; border: 1px solid #e89f71; color: #8d5c4c; }
+.dias-grid .dia.has-task { background-color: #fdecdb; border: 1px solid #e89f71; color: #8d5b4c; }
 .task-list { width: 100%; overflow: hidden; font-size: 0.75em; text-align: left; }
 .task-item { background-color: rgba(232, 159, 113, 0.2); padding: 2px 4px; border-radius: 3px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
@@ -83,7 +83,7 @@ body {
 .table-container { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; margin-top: 20px; }
 th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #f0f0f0; }
-th { background-color: #fdfaf6; font-weight: 600; color: #8d5c4c; }
+th { background-color: #fdfaf6; font-weight: 600; color: #8d5b4c; }
 tr:last-child td { border-bottom: none; }
 tr:hover { background-color: #fefcf9; }
 .button-danger { background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 1.2em; padding: 5px; }
@@ -93,7 +93,7 @@ tr:hover { background-color: #fefcf9; }
 .product-layout { display: flex; min-height: calc(100vh - 70px); }
 .product-sidebar { width: 280px; flex-shrink: 0; background-color: #fdfaf6; border-right: 1px solid #f0f0f0; display: flex; flex-direction: column; }
 .sidebar-header { padding: 15px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
-.sidebar-header h4 { margin: 0; color: #8d5c4c; }
+.sidebar-header h4 { margin: 0; color: #8d5b4c; }
 .small-btn { padding: 5px 10px; font-size: 1.2em; }
 .product-list { list-style: none; padding: 0; margin: 0; overflow-y: auto; }
 .product-list li { padding: 15px; cursor: pointer; border-bottom: 1px solid #eee; transition: background-color 0.2s; }
@@ -107,7 +107,7 @@ tr:hover { background-color: #fefcf9; }
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; }
 .modal-content { background-color: white; padding: 25px; border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); }
 .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 20px; }
-.modal-header h3 { margin: 0; color: #8d5c4c; }
+.modal-header h3 { margin: 0; color: #8d5b4c; }
 .modal-close-btn { background: none; border: none; font-size: 2em; cursor: pointer; color: #aaa; line-height: 1; }
 .lista-tarefas-modal { list-style: none; padding: 0; margin: 0 0 20px 0; }
 .lista-tarefas-modal li { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #f0f0f0; }
@@ -130,17 +130,16 @@ tr:hover { background-color: #fefcf9; }
     /* --- ALTERAÇÃO AQUI --- */
     /* Mobile para Dashboard */
     .dashboard-menu {
-        /* Remove o 'flex-direction: column' para manter lado a lado */
-        padding: 40px 10px; /* Ajusta o padding */
-        gap: 15px; /* Ajusta o espaço entre os ícones */
+        padding: 40px 10px;
+        gap: 20px;
     }
     .menu-item {
-        width: 45%;      /* Define a largura para ~metade da tela */
-        height: 140px;   /* Ajusta a altura para ficar mais proporcional */
+        width: 140px;      /* Largura fixa */
+        height: 140px;     /* Altura fixa (igual à largura para ser quadrado) */
         font-size: 0.9em;
     }
     .menu-item i {
-        font-size: 38px; /* Reduz um pouco o ícone */
+        font-size: 40px;   /* Ícone um pouco menor para caber melhor */
     }
     /* --- FIM DA ALTERAÇÃO --- */
 
