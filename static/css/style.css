@@ -1,106 +1,45 @@
 /* /montaki_agenda/static/css/style.css */
 
-/* Importando a fonte Lora do Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap');
 
-/* ESTILOS ESPECÍFICOS DA PÁGINA DE LOGIN */
+/* ESTILOS ESPECÍFICOS DA PÁGINA DE LOGIN E HOME */
 .login-body {
-    font-family: 'Lora', serif; /* Usando a nova fonte para o login */
-    /* Imagem de fundo de alta qualidade. Fonte: Unsplash */
+    font-family: 'Lora', serif;
     background-image: url('https://images.unsplash.com/photo-1587314168485-3236d6710814?q=80&w=1978&auto=format&fit=crop');
     background-size: cover;
     background-position: center;
+    background-attachment: fixed; /* A MÁGICA ACONTECE AQUI */
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .login-container {
-    background-color: rgba(255, 255, 255, 0.9); /* Fundo branco com leve transparência */
+    background-color: rgba(255, 255, 255, 0.9);
     padding: 40px;
     border-radius: 12px;
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
     text-align: center;
-    width: 90%;
+    width: 100%;
     max-width: 400px;
-    backdrop-filter: blur(5px); /* Efeito de vidro fosco no fundo */
+    backdrop-filter: blur(5px);
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.logo-container {
-    margin-bottom: 30px;
-}
-
-.logo-icon {
-    font-size: 48px;
-    color: #8d5b4c;
-}
-
-.login-container h1 {
-    color: #8d5b4c;
-    margin: 10px 0 0 0;
-    font-weight: 600;
-}
-
-.input-group {
-    position: relative;
-    margin: 20px 0;
-}
-
-.input-group i {
-    position: absolute;
-    left: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #aaa;
-}
-
-.input-group input {
-    width: 100%;
-    padding: 12px 12px 12px 45px; /* Espaço para o ícone */
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-sizing: border-box;
-    font-family: 'Lora', serif;
-    transition: border-color 0.3s;
-}
-
-.input-group input:focus {
-    outline: none;
-    border-color: #e89f71;
-    box-shadow: 0 0 5px rgba(232, 159, 113, 0.5);
-}
-
-.login-container button {
-    background-color: #e89f71;
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    width: 100%;
-    font-size: 16px;
-    font-family: 'Lora', serif;
-    font-weight: bold;
-    transition: background-color 0.3s, transform 0.2s;
-    margin-top: 10px;
-}
-
-.login-container button:hover {
-    background-color: #d18e64;
-    transform: translateY(-2px);
-}
-
-.error-message {
-    color: #c0392b; /* Cor vermelha para o erro */
-    background-color: rgba(231, 76, 60, 0.1);
-    padding: 10px;
-    border-radius: 5px;
-    margin-top: 0;
-    font-size: 0.9em;
-}
+.logo-container { margin-bottom: 30px; }
+.logo-icon { font-size: 48px; color: #8d5b4c; }
+.login-container h1 { color: #8d5b4c; margin: 10px 0 0 0; font-weight: 600; }
+.input-group { position: relative; margin: 20px 0; }
+.input-group i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #aaa; }
+.input-group input { width: 100%; padding: 12px 12px 12px 45px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-family: 'Lora', serif; transition: border-color 0.3s; }
+.input-group input:focus { outline: none; border-color: #e89f71; box-shadow: 0 0 5px rgba(232, 159, 113, 0.5); }
+.login-container button { background-color: #e89f71; color: white; padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; width: 100%; font-size: 16px; font-family: 'Lora', serif; font-weight: bold; transition: background-color 0.3s, transform 0.2s; margin-top: 10px; }
+.login-container button:hover { background-color: #d18e64; transform: translateY(-2px); }
+.error-message { color: #c0392b; background-color: rgba(231, 76, 60, 0.1); padding: 10px; border-radius: 5px; margin-top: 0; font-size: 0.9em; }
 
 /* --- ESTILOS GERAIS PARA AS OUTRAS PÁGINAS --- */
 body {
@@ -127,15 +66,7 @@ body {
 .dashboard-container { max-width: 900px; }
 .agenda-container { max-width: 900px; }
 
-.header {
-    background-color: #8d5b4c;
-    color: white;
-    padding: 15px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
+.header { background-color: #8d5b4c; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
 .header h2 { margin: 0; font-size: 1.2em; }
 .user-info { font-size: 0.9em; white-space: nowrap; }
 .user-info a { color: white; text-decoration: none; background-color: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 5px; margin-left: 10px; }
@@ -157,7 +88,7 @@ body {
 .back-button { font-size: 2em; color: white; text-decoration: none; margin-right: 15px; transition: transform 0.2s; }
 .back-button:hover { transform: scale(1.1); }
 
-/* CALENDÁRIO */
+/* ... (Restante do CSS para Calendário, Calculadora, Produtos e Modal) ... */
 .calendario { padding: 15px; }
 .mes { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
 .mes h3 { margin: 0; font-size: 1.3em; color: #8d5b4c; text-align: center; }
@@ -172,8 +103,6 @@ body {
 .dias-grid .dia.has-task { background-color: #fdecdb; border: 1px solid #e89f71; color: #8d5b4c; }
 .task-list { width: 100%; overflow: hidden; font-size: 0.75em; text-align: left; }
 .task-item { background-color: rgba(232, 159, 113, 0.2); padding: 2px 4px; border-radius: 3px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-/* CALCULADORA E PRODUTOS (Layout Geral) */
 .content-wrapper { padding: 20px 30px; }
 .card { background-color: #fdfdfd; border: 1px solid #f0f0f0; border-radius: 8px; padding: 25px; margin-bottom: 30px; }
 .card h3 { margin-top: 0; margin-bottom: 20px; color: #8d5b4c; border-bottom: 2px solid #fdecdb; padding-bottom: 10px; }
@@ -191,8 +120,6 @@ tr:last-child td { border-bottom: none; }
 tr:hover { background-color: #fefcf9; }
 .button-danger { background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 1.2em; padding: 5px; }
 .button-danger:hover { color: #c0392b; }
-
-/* PRODUTOS */
 .product-layout { display: flex; min-height: calc(100vh - 70px); }
 .product-sidebar { width: 280px; flex-shrink: 0; background-color: #fdfaf6; border-right: 1px solid #f0f0f0; display: flex; flex-direction: column; }
 .sidebar-header { padding: 15px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
@@ -205,8 +132,6 @@ tr:hover { background-color: #fefcf9; }
 .product-main-content { flex-grow: 1; padding: 30px; }
 .placeholder-view { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; color: #aaa; text-align: center; }
 .placeholder-view i { font-size: 60px; margin-bottom: 20px; }
-
-/* MODAL DE TAREFAS DA AGENDA */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; }
 .modal-content { background-color: white; padding: 25px; border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); }
 .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 20px; }
@@ -224,15 +149,32 @@ tr:hover { background-color: #fefcf9; }
 
 /* MOBILE */
 @media (max-width: 768px) {
-    body, .login-body { padding: 0; align-items: flex-start; }
-    .agenda-container, .dashboard-container, .page-container { border-radius: 0; min-height: 100vh; box-shadow: none; }
-    .login-container {
-        height: 100%;
+    /* --- ALTERAÇÃO AQUI --- */
+    .login-body {
+        padding: 0; /* Remove o padding para a imagem ir até as bordas */
+        align-items: flex-start;
+    }
+    .login-container, .dashboard-container {
+        height: auto; /* A altura se ajusta ao conteúdo */
+        min-height: 100vh; /* Ocupa pelo menos a altura toda da tela */
         border-radius: 0;
+        box-shadow: none;
         display: flex;
         flex-direction: column;
         justify-content: center;
+        background-color: rgba(255, 255, 255, 0.85); /* Aumenta a opacidade para legibilidade */
+        padding: 20px;
     }
+    .dashboard-container {
+        background-color: transparent; /* Deixa o fundo do dashboard totalmente transparente */
+        backdrop-filter: none; /* Remove o blur para focar nos ícones */
+    }
+    /* --- FIM DA ALTERAÇÃO --- */
+    
+    body {
+        padding: 0;
+    }
+    .agenda-container, .page-container { border-radius: 0; min-height: 100vh; box-shadow: none; }
     .header { padding: 15px; }
     .header h2 { font-size: 1.1em; }
     .user-info { font-size: 0.8em; }
