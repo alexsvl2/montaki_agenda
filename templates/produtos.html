@@ -35,8 +35,45 @@
                     <i class="fa-solid fa-cookie-bite"></i>
                     <p>Selecione um produto da lista ou crie um novo para começar.</p>
                 </div>
+
                 <div id="detalhe-view" style="display: none;">
+                    <div class="card">
+                        <h3 id="nome-produto">Nome do Produto</h3>
+                        <h4 id="custo-produto">Custo Total: R$ 0.00</h4>
                     </div>
+
+                    <div class="card">
+                        <h4>Receita</h4>
+                        <table class="recipe-table">
+                            <thead>
+                                <tr>
+                                    <th>Ingrediente</th>
+                                    <th>Quantidade</th>
+                                    <th>Custo do Item</th>
+                                    <th>Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="corpo-tabela-receita">
+                                </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card">
+                        <h4>Adicionar Ingrediente à Receita</h4>
+                        <form id="form-add-ingrediente-receita" class="form-grid">
+                            <div class="form-group">
+                                <label for="busca-ingrediente">Buscar Ingrediente</label>
+                                <input type="text" id="busca-ingrediente" list="datalist-ingredientes" placeholder="Digite para buscar..." required>
+                                <datalist id="datalist-ingredientes"></datalist>
+                            </div>
+                            <div class="form-group">
+                                <label for="quantidade-ingrediente">Quantidade (<span id="unidade-selecionada">g/ml/un</span>)</label>
+                                <input type="number" id="quantidade-ingrediente" step="0.01" placeholder="Ex: 150" required>
+                            </div>
+                            <button type="submit" class="button-primary">Adicionar à Receita</button>
+                        </form>
+                    </div>
+                </div>
             </main>
         </div>
     </div>
