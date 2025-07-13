@@ -1,5 +1,108 @@
 /* /montaki_agenda/static/css/style.css */
 
+/* Importando a fonte Lora do Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap');
+
+/* ESTILOS ESPECÍFICOS DA PÁGINA DE LOGIN */
+.login-body {
+    font-family: 'Lora', serif; /* Usando a nova fonte para o login */
+    /* Imagem de fundo de alta qualidade. Fonte: Unsplash */
+    background-image: url('https://images.unsplash.com/photo-1587314168485-3236d6710814?q=80&w=1978&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.login-container {
+    background-color: rgba(255, 255, 255, 0.9); /* Fundo branco com leve transparência */
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    width: 90%;
+    max-width: 400px;
+    backdrop-filter: blur(5px); /* Efeito de vidro fosco no fundo */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.logo-container {
+    margin-bottom: 30px;
+}
+
+.logo-icon {
+    font-size: 48px;
+    color: #8d5b4c;
+}
+
+.login-container h1 {
+    color: #8d5b4c;
+    margin: 10px 0 0 0;
+    font-weight: 600;
+}
+
+.input-group {
+    position: relative;
+    margin: 20px 0;
+}
+
+.input-group i {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 12px 12px 45px; /* Espaço para o ícone */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-family: 'Lora', serif;
+    transition: border-color 0.3s;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #e89f71;
+    box-shadow: 0 0 5px rgba(232, 159, 113, 0.5);
+}
+
+.login-container button {
+    background-color: #e89f71;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 16px;
+    font-family: 'Lora', serif;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-top: 10px;
+}
+
+.login-container button:hover {
+    background-color: #d18e64;
+    transform: translateY(-2px);
+}
+
+.error-message {
+    color: #c0392b; /* Cor vermelha para o erro */
+    background-color: rgba(231, 76, 60, 0.1);
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 0;
+    font-size: 0.9em;
+}
+
+/* --- ESTILOS GERAIS PARA AS OUTRAS PÁGINAS --- */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #fdfaf6;
@@ -121,36 +224,26 @@ tr:hover { background-color: #fefcf9; }
 
 /* MOBILE */
 @media (max-width: 768px) {
-    body { padding: 0; align-items: flex-start; }
+    body, .login-body { padding: 0; align-items: flex-start; }
     .agenda-container, .dashboard-container, .page-container { border-radius: 0; min-height: 100vh; box-shadow: none; }
+    .login-container {
+        height: 100%;
+        border-radius: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
     .header { padding: 15px; }
     .header h2 { font-size: 1.1em; }
     .user-info { font-size: 0.8em; }
-
-    /* --- ALTERAÇÃO AQUI --- */
-    /* Mobile para Dashboard */
-    .dashboard-menu {
-        padding: 40px 10px;
-        gap: 20px;
-    }
-    .menu-item {
-        width: 140px;      /* Largura fixa */
-        height: 140px;     /* Altura fixa (igual à largura para ser quadrado) */
-        font-size: 0.9em;
-    }
-    .menu-item i {
-        font-size: 40px;   /* Ícone um pouco menor para caber melhor */
-    }
-    /* --- FIM DA ALTERAÇÃO --- */
-
-    /* Mobile para Agenda */
+    .dashboard-menu { flex-direction: row; padding: 40px 10px; gap: 20px; }
+    .menu-item { width: 140px; height: 140px; font-size: 0.9em; }
+    .menu-item i { font-size: 40px; }
     .calendario { padding: 5px; }
     .mes h3 { font-size: 1.2em; }
     .dias-semana div { font-size: 0.7em; }
     .dias-grid .dia { min-height: 70px; font-size: 0.8em; }
     .task-list { font-size: 0.7em; }
-
-    /* Mobile para Calculadora e Produtos */
     .content-wrapper { padding: 15px; }
     .form-grid { grid-template-columns: 1fr; }
     .product-layout { flex-direction: column; }

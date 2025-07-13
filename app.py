@@ -11,7 +11,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-# --- ALTERAÇÃO CRÍTICA AQUI ---
 # Usando o caminho absoluto para o banco de dados para evitar qualquer ambiguidade no servidor.
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/alexsvl/montaki_agenda/agenda.db'
 app.config['SECRET_KEY'] = 'sua-chave-secreta-super-dificil'
@@ -68,14 +67,22 @@ def load_user(user_id):
 # --- ROTAS PRINCIPAIS ---
 @app.route('/', methods=['GET', 'POST'])
 def login():
-    if current_user.is_authenticated: return redirect(url_for('home'))
+    if current_user.is_authenticated: 
+        return redirect(url_for('home'))
+
+    error = None
     if request.method == 'POST':
-        user = User.query.filter_by(username=request.form['username']).first()
-        if user and user.check_password(request.form['password']):
+        username = request.form['username']
+        password = request.form['password']
+        user = User.query.filter_by(username=username).first()
+        if user and user.check_password(password):
             login_user(user)
             return redirect(url_for('home'))
-        return redirect(url_for('login'))
-    return render_template('login.html')
+        else:
+            # Em vez de redirecionar, renderiza a página de novo com uma mensagem de erro
+            error = 'Usuário ou senha inválidos.'
+            
+    return render_template('login.html', error=error)
 
 @app.route('/home')
 @login_required
