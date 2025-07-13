@@ -4,4 +4,4 @@ Flask
 Flask-SQLAlchemy
 Flask-Login
 Werkzeug
-Flask-Migrate
+Flask-Migrate  # <-- ADICIONE ESTA LINHA
