@@ -74,17 +74,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch('/api/ingredientes', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(dados),
+                body: JSON.stringify(dados) // A sintaxe aqui está corrigida
             });
 
-            if (!response.ok) throw new Error('Falha ao adicionar ingrediente.');
+            if (!response.ok) {
+                // Tenta ler a mensagem de erro do servidor se houver
+                const errorData = await response.json().catch(() => null);
+                const errorMessage = errorData ? errorData.mensagem : 'Falha ao adicionar ingrediente.';
+                throw new Error(errorMessage);
+            }
             
             form.reset();
             atualizarPlaceholder();
             carregarIngredientes();
         } catch (error) {
             console.error('Erro:', error);
-            alert('Não foi possível adicionar o ingrediente.');
+            alert(error.message);
         }
     });
 
