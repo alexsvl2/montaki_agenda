@@ -6,12 +6,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const quantidadeInput = document.getElementById('quantidade_pacote');
 
     const formatarPreco = (valor) => {
-        // Mostra mais casas decimais para valores pequenos (custo por grama)
-        if (valor < 0.01) return `R$ ${valor.toFixed(5)}`;
+        if (valor < 0.01) {
+            return `R$ ${valor.toFixed(5)}`;
+        }
         return `R$ ${valor.toFixed(2)}`;
     };
 
-    // Altera o placeholder do input de quantidade conforme a unidade selecionada
     const atualizarPlaceholder = () => {
         const unidade = unidadeSelect.value;
         if (unidade === 'g') {
@@ -31,8 +31,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const carregarIngredientes = async () => {
         try {
             const response = await fetch('/api/ingredientes');
+            if (!response.ok) throw new Error('Falha ao buscar ingredientes.');
+            
             const ingredientes = await response.json();
-            tbody.innerHTML = '';
+            tbody.innerHTML = ''; 
 
             if (ingredientes.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="4">Nenhum ingrediente cadastrado.</td></tr>';
@@ -54,6 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 tbody.appendChild(tr);
             });
         } catch (error) {
+            console.error('Erro:', error);
             tbody.innerHTML = '<tr><td colspan="4">Erro ao carregar ingredientes.</td></tr>';
         }
     };
@@ -64,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
             nome: form.nome.value,
             preco_pacote: form.preco_pacote.value,
             quantidade_pacote: form.quantidade_pacote.value,
-            unidade_medida: form.unidade_medida.value, // Enviando a unidade
+            unidade_medida: form.unidade_medida.value,
         };
 
         try {
@@ -73,11 +76,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(dados),
             });
+
             if (!response.ok) throw new Error('Falha ao adicionar ingrediente.');
+            
             form.reset();
-            atualizarPlaceholder(); // Reseta o label do placeholder
+            atualizarPlaceholder();
             carregarIngredientes();
         } catch (error) {
+            console.error('Erro:', error);
             alert('Não foi possível adicionar o ingrediente.');
         }
     });
@@ -88,17 +94,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const id = deleteButton.dataset.id;
             if (confirm('Tem certeza que deseja remover este ingrediente?')) {
                 try {
-                    const response = await fetch(`/api/ingredientes/${id}`, { method: 'DELETE' });
+                    const response = await fetch(`/api/ingredientes/${id}`, {
+                        method: 'DELETE',
+                    });
+
                     if (!response.ok) throw new Error('Falha ao remover ingrediente.');
+                    
                     carregarIngredientes();
                 } catch (error) {
+                    console.error('Erro:', error);
                     alert('Não foi possível remover o ingrediente.');
                 }
             }
         }
     });
-    
-    // Chama as funções iniciais
+
     atualizarPlaceholder();
     carregarIngredientes();
 });
