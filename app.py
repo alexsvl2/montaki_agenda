@@ -10,8 +10,12 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # --- CONFIGURAÇÃO INICIAL ---
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'agenda.db')
+
+# --- ALTERAÇÃO CRÍTICA AQUI ---
+# Usando o caminho absoluto para o banco de dados para evitar qualquer ambiguidade no servidor.
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/alexsvl/montaki_agenda/agenda.db'
 app.config['SECRET_KEY'] = 'sua-chave-secreta-super-dificil'
+
 db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -97,8 +101,6 @@ def produtos():
     return render_template('produtos.html', username=current_user.username, show_back_button=True)
 
 # --- APIs ---
-
-# API da Agenda
 @app.route('/api/tarefas', methods=['GET'])
 @login_required
 def get_tarefas():
@@ -136,12 +138,11 @@ def delete_tarefa(tarefa_id):
     db.session.commit()
     return jsonify({'status': 'sucesso'})
 
-# API da Calculadora
 @app.route('/api/ingredientes', methods=['GET'])
 @login_required
 def get_ingredientes():
     ingredientes = Ingrediente.query.order_by(Ingrediente.nome).all()
-    return jsonify([{'id': ing.id, 'nome': ing.nome, 'unidade_medida': ing.unidade_medida} for ing in ingredientes])
+    return jsonify([{'id': ing.id, 'nome': ing.nome, 'preco_pacote': ing.preco_pacote, 'quantidade_pacote': ing.quantidade_pacote, 'unidade_medida': ing.unidade_medida, 'custo_unitario_base': ing.custo_unitario_base} for ing in ingredientes])
 
 @app.route('/api/ingredientes', methods=['POST'])
 @login_required
@@ -161,7 +162,6 @@ def delete_ingrediente(id):
     db.session.commit()
     return jsonify({'status': 'sucesso'})
 
-# API de Produtos
 @app.route('/api/produtos', methods=['GET'])
 @login_required
 def get_produtos():
