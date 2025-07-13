@@ -10,20 +10,18 @@ body {
     padding: 10px;
     min-height: 100vh;
     box-sizing: border-box;
+    margin: 0;
 }
 
 .agenda-container, .dashboard-container, .page-container {
     width: 100%;
-    max-width: 1100px; /* Aumentado para acomodar páginas mais largas */
+    max-width: 1100px;
     background-color: white;
     box-shadow: 0 5px 15px rgba(0,0,0,0.08);
     border-radius: 10px;
     overflow: hidden;
 }
-/* Específico para o dashboard que é mais centralizado */
-.dashboard-container {
-    max-width: 900px;
-}
+.dashboard-container { max-width: 900px; }
 
 .header {
     background-color: #8d5b4c;
@@ -39,10 +37,7 @@ body {
 .user-info a { color: white; text-decoration: none; background-color: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 5px; margin-left: 10px; }
 .user-info a:hover { background-color: rgba(255,255,255,0.4); }
 
-
-/* ================================== */
-/* === ESTILOS PARA O DASHBOARD === */
-/* ================================== */
+/* DASHBOARD */
 .dashboard-menu { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; padding: 60px 20px; gap: 30px; }
 .menu-link { text-decoration: none; color: inherit; }
 .menu-item { width: 180px; height: 160px; border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
@@ -58,10 +53,7 @@ body {
 .back-button { font-size: 2em; color: white; text-decoration: none; margin-right: 15px; transition: transform 0.2s; }
 .back-button:hover { transform: scale(1.1); }
 
-
-/* ================================= */
-/* === ESTILOS PARA AGENDA/CALENDÁRIO === */
-/* ================================= */
+/* CALENDÁRIO */
 .calendario { padding: 15px; }
 .mes { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
 .mes h3 { margin: 0; font-size: 1.3em; color: #8d5b4c; text-align: center; }
@@ -78,10 +70,7 @@ body {
 .task-list { width: 100%; overflow: hidden; font-size: 0.75em; text-align: left; }
 .task-item { background-color: rgba(232, 159, 113, 0.2); padding: 2px 4px; border-radius: 3px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-
-/* ======================================= */
-/* === ESTILOS PARA PÁGINA CALCULADORA === */
-/* ======================================= */
+/* CALCULADORA */
 .content-wrapper { padding: 20px 30px; }
 .card { background-color: #fdfdfd; border: 1px solid #f0f0f0; border-radius: 8px; padding: 25px; margin-bottom: 30px; }
 .card h3 { margin-top: 0; margin-bottom: 20px; color: #8d5b4c; border-bottom: 2px solid #fdecdb; padding-bottom: 10px; }
@@ -100,28 +89,37 @@ tr:hover { background-color: #fefcf9; }
 .button-danger { background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 1.2em; padding: 5px; }
 .button-danger:hover { color: #c0392b; }
 
+/* PRODUTOS */
+.product-layout { display: flex; min-height: calc(100vh - 70px); }
+.product-sidebar { width: 280px; flex-shrink: 0; background-color: #fdfaf6; border-right: 1px solid #f0f0f0; display: flex; flex-direction: column; }
+.sidebar-header { padding: 15px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+.sidebar-header h4 { margin: 0; color: #8d5b4c; }
+.small-btn { padding: 5px 10px; font-size: 1.2em; }
+.product-list { list-style: none; padding: 0; margin: 0; overflow-y: auto; }
+.product-list li { padding: 15px; cursor: pointer; border-bottom: 1px solid #eee; transition: background-color 0.2s; }
+.product-list li:hover { background-color: #f7f2e9; }
+.product-list li.active { background-color: #fdecdb; font-weight: bold; color: #a0522d; }
+.product-main-content { flex-grow: 1; padding: 30px; }
+.placeholder-view { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; color: #aaa; text-align: center; }
+.placeholder-view i { font-size: 60px; margin-bottom: 20px; }
 
-/* === ESTILOS MOBILE === */
+/* MOBILE */
 @media (max-width: 768px) {
     body { padding: 0; align-items: flex-start; }
     .agenda-container, .dashboard-container, .page-container { border-radius: 0; min-height: 100vh; box-shadow: none; }
     .header { padding: 15px; }
     .header h2 { font-size: 1.1em; }
     .user-info { font-size: 0.8em; }
-    
-    /* Mobile para Dashboard */
     .dashboard-menu { flex-direction: column; padding: 40px 20px; gap: 20px; }
     .menu-item { width: 100%; max-width: 250px; height: 120px; }
     .menu-item i { font-size: 36px; }
-
-    /* Mobile para Agenda */
     .calendario { padding: 5px; }
     .mes h3 { font-size: 1.2em; }
     .dias-semana div { font-size: 0.7em; }
     .dias-grid .dia { min-height: 70px; font-size: 0.8em; }
     .task-list { font-size: 0.7em; }
-
-    /* Mobile para Calculadora */
     .content-wrapper { padding: 15px; }
     .form-grid { grid-template-columns: 1fr; }
+    .product-layout { flex-direction: column; }
+    .product-sidebar { width: 100%; border-right: none; border-bottom: 1px solid #f0f0f0; }
 }
