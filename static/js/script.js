@@ -37,11 +37,32 @@ document.addEventListener('DOMContentLoaded', () => {
             const dataCompleta = `${ano}-${String(mes + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
             const diaElement = document.createElement('div');
             diaElement.className = 'dia';
-            diaElement.textContent = dia;
+            
+            // --- ALTERAÇÃO AQUI ---
+            // Criamos um elemento separado para o número do dia
+            const numeroDia = document.createElement('div');
+            numeroDia.className = 'numero-dia';
+            numeroDia.textContent = dia;
+            diaElement.appendChild(numeroDia);
 
+            // Se existirem tarefas para este dia
             if (tarefasDoMes[dataCompleta]) {
                 diaElement.classList.add('has-task');
+
+                // Criamos a lista de resumos de tarefas
+                const taskList = document.createElement('div');
+                taskList.className = 'task-list';
+                
+                // Iteramos sobre as tarefas e adicionamos a descrição
+                tarefasDoMes[dataCompleta].forEach(tarefa => {
+                    const taskItem = document.createElement('div');
+                    taskItem.className = 'task-item';
+                    taskItem.textContent = tarefa.descricao; // Acessa a propriedade 'descricao'
+                    taskList.appendChild(taskItem);
+                });
+                diaElement.appendChild(taskList);
             }
+            // --- FIM DA ALTERAÇÃO ---
             
             diaElement.addEventListener('click', () => abrirModal(dataCompleta));
             diasGridElement.appendChild(diaElement);
@@ -50,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const abrirModal = (data) => {
         modalDataElement.textContent = data.split('-').reverse().join('/');
-        modalCorpo.innerHTML = ''; // Limpa o conteúdo anterior
+        modalCorpo.innerHTML = '';
 
         const tarefasDoDia = tarefasDoMes[data] || [];
 
@@ -71,14 +92,12 @@ document.addEventListener('DOMContentLoaded', () => {
             modalCorpo.appendChild(ul);
         }
 
-        // Botão para adicionar nova tarefa
         const btnAdicionar = document.createElement('button');
         btnAdicionar.textContent = 'Adicionar Nova Tarefa';
         btnAdicionar.className = 'button-primary';
         btnAdicionar.addEventListener('click', () => adicionarTarefa(data));
         modalCorpo.appendChild(btnAdicionar);
 
-        // Adiciona eventos aos botões de editar e deletar
         modalCorpo.querySelectorAll('.btn-edit').forEach(btn => btn.addEventListener('click', (e) => editarTarefa(e.currentTarget.dataset.id)));
         modalCorpo.querySelectorAll('.btn-delete').forEach(btn => btn.addEventListener('click', (e) => deletarTarefa(e.currentTarget.dataset.id)));
 
@@ -124,14 +143,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Eventos
     modalFecharBtn.addEventListener('click', fecharModal);
     modal.addEventListener('click', (e) => {
-        if (e.target === modal) fecharModal(); // Fecha se clicar fora do conteúdo
+        if (e.target === modal) fecharModal();
     });
     prevMesBtn.addEventListener('click', () => { dataAtual.setMonth(dataAtual.getMonth() - 1); gerarCalendario(); });
     nextMesBtn.addEventListener('click', () => { dataAtual.setMonth(dataAtual.getMonth() + 1); gerarCalendario(); });
     
-    // Inicia
     gerarCalendario();
 });
