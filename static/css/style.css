@@ -62,43 +62,15 @@ body {
 .mes button:hover { background-color: #f1f1f1; }
 .dias-semana, .dias-grid { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; }
 .dias-semana div { font-weight: bold; padding: 8px 0; color: #e89f71; font-size: 0.8em; }
-.dias-grid .dia {
-    border: 1px solid #f0f0f0;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    min-height: 90px;
-    position: relative;
-    padding: 4px;
-    /* Alterado para organizar o conteúdo */
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-.dias-grid .dia .numero-dia {
-    font-weight: bold;
-    margin-bottom: 4px;
-    padding: 2px 4px;
-}
+.dias-grid .dia { border: 1px solid #f0f0f0; cursor: pointer; transition: background-color 0.2s; min-height: 90px; position: relative; padding: 4px; display: flex; flex-direction: column; align-items: flex-start; }
+.dias-grid .dia .numero-dia { font-weight: bold; margin-bottom: 4px; padding: 2px 4px; }
 .dias-grid .dia:hover { background-color: #fdfaf6; }
 .dias-grid .dia.outro-mes { color: #ccc; cursor: default; background-color: #f9f9f9; }
-.dias-grid .dia.has-task { background-color: #fdecdb; border: 1px solid #e89f71; color: #8d5b4c; }
-.task-list {
-    width: 100%;
-    overflow: hidden;
-    font-size: 0.75em;
-    text-align: left;
-}
-.task-item {
-    background-color: rgba(232, 159, 113, 0.2);
-    padding: 2px 4px;
-    border-radius: 3px;
-    margin-bottom: 2px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
+.dias-grid .dia.has-task { background-color: #fdecdb; border: 1px solid #e89f71; color: #8d5c4c; }
+.task-list { width: 100%; overflow: hidden; font-size: 0.75em; text-align: left; }
+.task-item { background-color: rgba(232, 159, 113, 0.2); padding: 2px 4px; border-radius: 3px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-/* ... (Restante do CSS para Calculadora, Produtos, Modal e Mobile continua o mesmo) ... */
+/* CALCULADORA E PRODUTOS (Layout Geral) */
 .content-wrapper { padding: 20px 30px; }
 .card { background-color: #fdfdfd; border: 1px solid #f0f0f0; border-radius: 8px; padding: 25px; margin-bottom: 30px; }
 .card h3 { margin-top: 0; margin-bottom: 20px; color: #8d5b4c; border-bottom: 2px solid #fdecdb; padding-bottom: 10px; }
@@ -111,15 +83,17 @@ body {
 .table-container { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; margin-top: 20px; }
 th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #f0f0f0; }
-th { background-color: #fdfaf6; font-weight: 600; color: #8d5b4c; }
+th { background-color: #fdfaf6; font-weight: 600; color: #8d5c4c; }
 tr:last-child td { border-bottom: none; }
 tr:hover { background-color: #fefcf9; }
 .button-danger { background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 1.2em; padding: 5px; }
 .button-danger:hover { color: #c0392b; }
+
+/* PRODUTOS */
 .product-layout { display: flex; min-height: calc(100vh - 70px); }
 .product-sidebar { width: 280px; flex-shrink: 0; background-color: #fdfaf6; border-right: 1px solid #f0f0f0; display: flex; flex-direction: column; }
 .sidebar-header { padding: 15px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
-.sidebar-header h4 { margin: 0; color: #8d5b4c; }
+.sidebar-header h4 { margin: 0; color: #8d5c4c; }
 .small-btn { padding: 5px 10px; font-size: 1.2em; }
 .product-list { list-style: none; padding: 0; margin: 0; overflow-y: auto; }
 .product-list li { padding: 15px; cursor: pointer; border-bottom: 1px solid #eee; transition: background-color 0.2s; }
@@ -128,10 +102,12 @@ tr:hover { background-color: #fefcf9; }
 .product-main-content { flex-grow: 1; padding: 30px; }
 .placeholder-view { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; color: #aaa; text-align: center; }
 .placeholder-view i { font-size: 60px; margin-bottom: 20px; }
+
+/* MODAL DE TAREFAS DA AGENDA */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; }
 .modal-content { background-color: white; padding: 25px; border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); }
 .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 20px; }
-.modal-header h3 { margin: 0; color: #8d5b4c; }
+.modal-header h3 { margin: 0; color: #8d5c4c; }
 .modal-close-btn { background: none; border: none; font-size: 2em; cursor: pointer; color: #aaa; line-height: 1; }
 .lista-tarefas-modal { list-style: none; padding: 0; margin: 0 0 20px 0; }
 .lista-tarefas-modal li { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #f0f0f0; }
@@ -142,20 +118,40 @@ tr:hover { background-color: #fefcf9; }
 .btn-edit:hover { color: #2980b9; }
 .btn-delete { color: #e74c3c; }
 .btn-delete:hover { color: #c0392b; }
+
+/* MOBILE */
 @media (max-width: 768px) {
     body { padding: 0; align-items: flex-start; }
     .agenda-container, .dashboard-container, .page-container { border-radius: 0; min-height: 100vh; box-shadow: none; }
     .header { padding: 15px; }
     .header h2 { font-size: 1.1em; }
     .user-info { font-size: 0.8em; }
-    .dashboard-menu { flex-direction: column; padding: 40px 20px; gap: 20px; }
-    .menu-item { width: 100%; max-width: 250px; height: 120px; }
-    .menu-item i { font-size: 36px; }
+
+    /* --- ALTERAÇÃO AQUI --- */
+    /* Mobile para Dashboard */
+    .dashboard-menu {
+        /* Remove o 'flex-direction: column' para manter lado a lado */
+        padding: 40px 10px; /* Ajusta o padding */
+        gap: 15px; /* Ajusta o espaço entre os ícones */
+    }
+    .menu-item {
+        width: 45%;      /* Define a largura para ~metade da tela */
+        height: 140px;   /* Ajusta a altura para ficar mais proporcional */
+        font-size: 0.9em;
+    }
+    .menu-item i {
+        font-size: 38px; /* Reduz um pouco o ícone */
+    }
+    /* --- FIM DA ALTERAÇÃO --- */
+
+    /* Mobile para Agenda */
     .calendario { padding: 5px; }
     .mes h3 { font-size: 1.2em; }
     .dias-semana div { font-size: 0.7em; }
     .dias-grid .dia { min-height: 70px; font-size: 0.8em; }
     .task-list { font-size: 0.7em; }
+
+    /* Mobile para Calculadora e Produtos */
     .content-wrapper { padding: 15px; }
     .form-grid { grid-template-columns: 1fr; }
     .product-layout { flex-direction: column; }
