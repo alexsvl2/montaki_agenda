@@ -22,6 +22,7 @@ body {
     overflow: hidden;
 }
 .dashboard-container { max-width: 900px; }
+.agenda-container { max-width: 900px; } /* Define um tamanho máximo para a agenda */
 
 .header {
     background-color: #8d5b4c;
@@ -70,7 +71,7 @@ body {
 .task-list { width: 100%; overflow: hidden; font-size: 0.75em; text-align: left; }
 .task-item { background-color: rgba(232, 159, 113, 0.2); padding: 2px 4px; border-radius: 3px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-/* CALCULADORA */
+/* CALCULADORA E PRODUTOS (Layout Geral) */
 .content-wrapper { padding: 20px 30px; }
 .card { background-color: #fdfdfd; border: 1px solid #f0f0f0; border-radius: 8px; padding: 25px; margin-bottom: 30px; }
 .card h3 { margin-top: 0; margin-bottom: 20px; color: #8d5b4c; border-bottom: 2px solid #fdecdb; padding-bottom: 10px; }

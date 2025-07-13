@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body>
-    <div class="page-container" style="max-width: 1400px;">
+    <div class="agenda-container">
         <div class="header">
             {% if show_back_button %}
                 <a href="{{ url_for('home') }}" class="back-button" title="Voltar ao Menu">&#x2190;</a>
@@ -20,27 +20,17 @@
             </div>
         </div>
         
-        <div class="agenda-layout">
-            <main class="calendario-principal">
-                <div class="mes">
-                    <button id="prev-mes">&lt;</button>
-                    <h3 id="mes-ano"></h3>
-                    <button id="next-mes">&gt;</button>
+        <div class="calendario">
+            <div class="mes">
+                <button id="prev-mes">&lt;</button>
+                <h3 id="mes-ano"></h3>
+                <button id="next-mes">&gt;</button>
+            </div>
+            <div class="dias-semana">
+                <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
+            </div>
+            <div class="dias-grid" id="dias-grid">
                 </div>
-                <div class="dias-semana">
-                    <div>Dom</div><div>Seg</div><div>Ter</div><div>Qua</div><div>Qui</div><div>Sex</div><div>Sáb</div>
-                </div>
-                <div class="dias-grid" id="dias-grid">
-                    </div>
-            </main>
-    
-            <aside class="painel-tarefas">
-                <h4>Tarefas para <span id="data-selecionada-painel">--/--/----</span></h4>
-                <div id="lista-tarefas-painel" class="lista-tarefas-container">
-                    <p>Nenhuma tarefa para este dia.</p>
-                </div>
-                <button id="btn-adicionar-tarefa-painel" class="button-primary">Adicionar Nova Tarefa</button>
-            </aside>
         </div>
     </div>
 
