@@ -53,10 +53,7 @@ class Produto(db.Model):
     receita = db.relationship('ReceitaItem', backref='produto', lazy=True, cascade="all, delete-orphan")
     
     def calcular_custo_total(self):
-        novo_custo = 0
-        for item in self.receita:
-            custo_item = item.ingrediente.custo_unitario_base * item.quantidade
-            novo_custo += custo_item
+        novo_custo = sum(item.ingrediente.custo_unitario_base * item.quantidade for item in self.receita)
         self.custo_total = novo_custo
         db.session.commit()
 
@@ -100,31 +97,51 @@ def produtos():
     return render_template('produtos.html', username=current_user.username, show_back_button=True)
 
 # --- APIs ---
-# (API da Agenda)
-@app.route('/api/tarefas', methods=['GET', 'POST'])
-@login_required
-def api_tarefas():
-    if request.method == 'GET':
-        tarefas = Tarefa.query.all()
-        tarefas_dict = {}
-        for tarefa in tarefas:
-            if tarefa.data not in tarefas_dict: tarefas_dict[tarefa.data] = []
-            tarefas_dict[tarefa.data].append(tarefa.descricao)
-        return jsonify(tarefas_dict)
-    if request.method == 'POST':
-        dados = request.get_json()
-        nova_tarefa = Tarefa(data=dados['data'], descricao=dados['descricao'])
-        db.session.add(nova_tarefa)
-        db.session.commit()
-        return jsonify({'status': 'sucesso'})
 
-# (API da Calculadora)
+# API da Agenda
+@app.route('/api/tarefas', methods=['GET'])
+@login_required
+def get_tarefas():
+    tarefas = Tarefa.query.all()
+    tarefas_por_data = {}
+    for tarefa in tarefas:
+        if tarefa.data not in tarefas_por_data:
+            tarefas_por_data[tarefa.data] = []
+        tarefas_por_data[tarefa.data].append({'id': tarefa.id, 'descricao': tarefa.descricao})
+    return jsonify(tarefas_por_data)
+
+@app.route('/api/tarefas', methods=['POST'])
+@login_required
+def add_tarefa():
+    dados = request.get_json()
+    nova_tarefa = Tarefa(data=dados['data'], descricao=dados['descricao'])
+    db.session.add(nova_tarefa)
+    db.session.commit()
+    return jsonify({'status': 'sucesso', 'tarefa': {'id': nova_tarefa.id, 'descricao': nova_tarefa.descricao}}), 201
+
+@app.route('/api/tarefa/<int:tarefa_id>', methods=['PUT'])
+@login_required
+def update_tarefa(tarefa_id):
+    tarefa = Tarefa.query.get_or_404(tarefa_id)
+    dados = request.get_json()
+    tarefa.descricao = dados['descricao']
+    db.session.commit()
+    return jsonify({'status': 'sucesso'})
+
+@app.route('/api/tarefa/<int:tarefa_id>', methods=['DELETE'])
+@login_required
+def delete_tarefa(tarefa_id):
+    tarefa = Tarefa.query.get_or_404(tarefa_id)
+    db.session.delete(tarefa)
+    db.session.commit()
+    return jsonify({'status': 'sucesso'})
+
+# API da Calculadora
 @app.route('/api/ingredientes', methods=['GET'])
 @login_required
 def get_ingredientes():
     ingredientes = Ingrediente.query.order_by(Ingrediente.nome).all()
-    lista_ingredientes = [{'id': ing.id, 'nome': ing.nome, 'preco_pacote': ing.preco_pacote, 'quantidade_pacote': ing.quantidade_pacote, 'unidade_medida': ing.unidade_medida, 'custo_unitario_base': ing.custo_unitario_base} for ing in ingredientes]
-    return jsonify(lista_ingredientes)
+    return jsonify([{'id': ing.id, 'nome': ing.nome, 'unidade_medida': ing.unidade_medida} for ing in ingredientes])
 
 @app.route('/api/ingredientes', methods=['POST'])
 @login_required
@@ -144,7 +161,7 @@ def delete_ingrediente(id):
     db.session.commit()
     return jsonify({'status': 'sucesso'})
 
-# (API de Produtos)
+# API de Produtos
 @app.route('/api/produtos', methods=['GET'])
 @login_required
 def get_produtos():

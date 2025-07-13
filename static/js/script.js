@@ -1,19 +1,30 @@
 // /montaki_agenda/static/js/script.js
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Elementos do Calendário
     const mesAnoElement = document.getElementById('mes-ano');
     const diasGridElement = document.getElementById('dias-grid');
     const prevMesBtn = document.getElementById('prev-mes');
     const nextMesBtn = document.getElementById('next-mes');
 
-    let dataAtual = new Date();
+    // Elementos do Modal
+    const modal = document.getElementById('modal-tarefas');
+    const modalFecharBtn = document.getElementById('modal-fechar');
+    const modalDataElement = document.getElementById('modal-data');
+    const modalCorpo = document.getElementById('modal-corpo');
 
-    const gerarCalendario = async (ano, mes) => {
+    let dataAtual = new Date();
+    let tarefasDoMes = {};
+
+    const gerarCalendario = async () => {
+        const ano = dataAtual.getFullYear();
+        const mes = dataAtual.getMonth();
+        
         diasGridElement.innerHTML = '';
         mesAnoElement.textContent = `${new Date(ano, mes).toLocaleString('pt-BR', { month: 'long' })} ${ano}`;
 
         const response = await fetch('/api/tarefas');
-        const tarefas = await response.json(); 
+        tarefasDoMes = await response.json();
 
         let primeiroDia = new Date(ano, mes, 1).getDay();
         let diasNoMes = new Date(ano, mes + 1, 0).getDate();
@@ -26,66 +37,101 @@ document.addEventListener('DOMContentLoaded', () => {
             const dataCompleta = `${ano}-${String(mes + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
             const diaElement = document.createElement('div');
             diaElement.className = 'dia';
+            diaElement.textContent = dia;
 
-            const numeroDia = document.createElement('div');
-            numeroDia.className = 'numero-dia';
-            numeroDia.textContent = dia;
-            diaElement.appendChild(numeroDia);
-            
-            if (tarefas[dataCompleta]) {
+            if (tarefasDoMes[dataCompleta]) {
                 diaElement.classList.add('has-task');
-                const taskListElement = document.createElement('div');
-                taskListElement.className = 'task-list';
-                tarefas[dataCompleta].forEach(descricao => {
-                    const taskItem = document.createElement('div');
-                    taskItem.className = 'task-item';
-                    taskItem.textContent = descricao;
-                    taskListElement.appendChild(taskItem);
-                });
-                diaElement.appendChild(taskListElement);
             }
             
-            // Lógica de clique original
-            diaElement.addEventListener('click', () => {
-                const tarefasDoDia = tarefas[dataCompleta];
-                if (tarefasDoDia && tarefasDoDia.length > 0) {
-                    mostrarTarefas(dataCompleta, tarefasDoDia);
-                } else {
-                    adicionarTarefa(dataCompleta);
-                }
-            });
-            
+            diaElement.addEventListener('click', () => abrirModal(dataCompleta));
             diasGridElement.appendChild(diaElement);
         }
     };
 
-    const mostrarTarefas = (data, descricoes) => {
-        const dataFormatada = data.split('-').reverse().join('/');
-        const listaFormatada = descricoes.map(d => `• ${d}`).join('\n');
-        alert(`Tarefas para ${dataFormatada}:\n\n${listaFormatada}`);
+    const abrirModal = (data) => {
+        modalDataElement.textContent = data.split('-').reverse().join('/');
+        modalCorpo.innerHTML = ''; // Limpa o conteúdo anterior
+
+        const tarefasDoDia = tarefasDoMes[data] || [];
+
+        if (tarefasDoDia.length > 0) {
+            const ul = document.createElement('ul');
+            ul.className = 'lista-tarefas-modal';
+            tarefasDoDia.forEach(tarefa => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span>${tarefa.descricao}</span>
+                    <div class="task-actions">
+                        <button class="btn-action btn-edit" data-id="${tarefa.id}"><i class="fa-solid fa-pencil"></i></button>
+                        <button class="btn-action btn-delete" data-id="${tarefa.id}"><i class="fa-solid fa-trash-can"></i></button>
+                    </div>
+                `;
+                ul.appendChild(li);
+            });
+            modalCorpo.appendChild(ul);
+        }
+
+        // Botão para adicionar nova tarefa
+        const btnAdicionar = document.createElement('button');
+        btnAdicionar.textContent = 'Adicionar Nova Tarefa';
+        btnAdicionar.className = 'button-primary';
+        btnAdicionar.addEventListener('click', () => adicionarTarefa(data));
+        modalCorpo.appendChild(btnAdicionar);
+
+        // Adiciona eventos aos botões de editar e deletar
+        modalCorpo.querySelectorAll('.btn-edit').forEach(btn => btn.addEventListener('click', (e) => editarTarefa(e.currentTarget.dataset.id)));
+        modalCorpo.querySelectorAll('.btn-delete').forEach(btn => btn.addEventListener('click', (e) => deletarTarefa(e.currentTarget.dataset.id)));
+
+        modal.style.display = 'flex';
+    };
+
+    const fecharModal = () => {
+        modal.style.display = 'none';
     };
 
     const adicionarTarefa = async (data) => {
-        const descricao = prompt(`Adicionar tarefa para ${data.split('-').reverse().join('/')}:\n(Ex: Bolo de casamento 3 andares)`);
+        const descricao = prompt('Digite a nova tarefa:');
         if (descricao && descricao.trim() !== '') {
             await fetch('/api/tarefas', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ data: data, descricao: descricao.trim() }),
+                body: JSON.stringify({ data: data, descricao: descricao.trim() })
             });
-            gerarCalendario(dataAtual.getFullYear(), dataAtual.getMonth());
+            fecharModal();
+            gerarCalendario();
         }
     };
 
-    prevMesBtn.addEventListener('click', () => {
-        dataAtual.setMonth(dataAtual.getMonth() - 1);
-        gerarCalendario(dataAtual.getFullYear(), dataAtual.getMonth());
-    });
+    const editarTarefa = async (id) => {
+        const descricaoAntiga = document.querySelector(`.btn-edit[data-id='${id}']`).closest('li').querySelector('span').textContent;
+        const novaDescricao = prompt('Edite a tarefa:', descricaoAntiga);
+        if (novaDescricao && novaDescricao.trim() !== '' && novaDescricao !== descricaoAntiga) {
+            await fetch(`/api/tarefa/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ descricao: novaDescricao.trim() })
+            });
+            fecharModal();
+            gerarCalendario();
+        }
+    };
 
-    nextMesBtn.addEventListener('click', () => {
-        dataAtual.setMonth(dataAtual.getMonth() + 1);
-        gerarCalendario(dataAtual.getFullYear(), dataAtual.getMonth());
+    const deletarTarefa = async (id) => {
+        if (confirm('Tem certeza que deseja excluir esta tarefa?')) {
+            await fetch(`/api/tarefa/${id}`, { method: 'DELETE' });
+            fecharModal();
+            gerarCalendario();
+        }
+    };
+
+    // Eventos
+    modalFecharBtn.addEventListener('click', fecharModal);
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) fecharModal(); // Fecha se clicar fora do conteúdo
     });
+    prevMesBtn.addEventListener('click', () => { dataAtual.setMonth(dataAtual.getMonth() - 1); gerarCalendario(); });
+    nextMesBtn.addEventListener('click', () => { dataAtual.setMonth(dataAtual.getMonth() + 1); gerarCalendario(); });
     
-    gerarCalendario(dataAtual.getFullYear(), dataAtual.getMonth());
+    // Inicia
+    gerarCalendario();
 });
