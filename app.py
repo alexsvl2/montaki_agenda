@@ -1,5 +1,3 @@
-# /montaki_agenda/app.py
-
 import os
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
@@ -11,8 +9,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-# --- LÓGICA INTELIGENTE PARA O CAMINHO DO BANCO DE DADOS ---
-# Verifica se o caminho base contém '/home/alexsvl', indicando que está no PythonAnywhere
+# Lógica inteligente para o caminho do banco de dados
 if '/home/alexsvl' in basedir:
     # Configuração para o servidor PythonAnywhere
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/alexsvl/montaki_agenda/agenda.db'
@@ -172,7 +169,13 @@ def delete_tarefa(tarefa_id):
 @login_required
 def get_ingredientes():
     ingredientes = Ingrediente.query.order_by(Ingrediente.nome).all()
-    return jsonify([{'id': ing.id, 'nome': ing.nome, 'unidade_medida': ing.unidade_medida} for ing in ingredientes])
+    return jsonify([{'id': ing.id, 
+                     'nome': ing.nome, 
+                     'preco_pacote': ing.preco_pacote, 
+                     'quantidade_pacote': ing.quantidade_pacote, 
+                     'unidade_medida': ing.unidade_medida, 
+                     'custo_unitario_base': ing.custo_unitario_base
+                    } for ing in ingredientes])
 
 @app.route('/api/ingredientes', methods=['POST'])
 @login_required
@@ -238,7 +241,7 @@ def delete_item_receita(item_id):
     db.session.commit()
     produto.calcular_custo_total()
     return jsonify({'status': 'sucesso'})
-
+    
 @app.route('/api/cardapio', methods=['GET'])
 @login_required
 def get_cardapio_itens():
@@ -286,7 +289,7 @@ def delete_cardapio_item(item_id):
     db.session.delete(item)
     db.session.commit()
     return jsonify({'status': 'sucesso'})
-    
+
 # --- Comandos de Terminal ---
 @app.cli.command('create-db')
 def create_db():
