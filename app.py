@@ -1,3 +1,5 @@
+# /montaki_agenda/app.py
+
 import os
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
@@ -5,10 +7,19 @@ from flask_migrate import Migrate
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
+# --- CONFIGURAÇÃO INICIAL ---
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/alexsvl/montaki_agenda/agenda.db'
+# --- LÓGICA INTELIGENTE PARA O CAMINHO DO BANCO DE DADOS ---
+# Verifica se o caminho base contém '/home/alexsvl', indicando que está no PythonAnywhere
+if '/home/alexsvl' in basedir:
+    # Configuração para o servidor PythonAnywhere
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/alexsvl/montaki_agenda/agenda.db'
+else:
+    # Configuração para o ambiente local (Windows, Mac, etc.)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'agenda.db')
+
 app.config['SECRET_KEY'] = 'sua-chave-secreta-super-dificil'
 
 db = SQLAlchemy(app)
@@ -17,6 +28,7 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 migrate = Migrate(app, db)
 
+# --- MODELOS DO BANCO DE DADOS ---
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -49,11 +61,18 @@ class Produto(db.Model):
     nome = db.Column(db.String(100), nullable=False)
     custo_total = db.Column(db.Float, default=0.0)
     receita = db.relationship('ReceitaItem', backref='produto', lazy=True, cascade="all, delete-orphan")
-    
     def calcular_custo_total(self):
         novo_custo = sum(item.ingrediente.custo_unitario_base * item.quantidade for item in self.receita)
         self.custo_total = novo_custo
         db.session.commit()
+
+class CardapioItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(100), nullable=False)
+    descricao = db.Column(db.String(500), nullable=False)
+    valor = db.Column(db.Float, nullable=False)
+    foto = db.Column(db.String(200), nullable=True) 
+    ativo = db.Column(db.Boolean, default=True, nullable=False)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -62,20 +81,15 @@ def load_user(user_id):
 # --- ROTAS PRINCIPAIS ---
 @app.route('/', methods=['GET', 'POST'])
 def login():
-    if current_user.is_authenticated: 
-        return redirect(url_for('home'))
-
+    if current_user.is_authenticated: return redirect(url_for('home'))
     error = None
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        user = User.query.filter_by(username=username).first()
-        if user and user.check_password(password):
+        user = User.query.filter_by(username=request.form['username']).first()
+        if user and user.check_password(request.form['password']):
             login_user(user)
             return redirect(url_for('home'))
         else:
             error = 'Usuário ou senha inválidos.'
-            
     return render_template('login.html', error=error)
 
 @app.route('/home')
@@ -110,6 +124,11 @@ def produtos():
 @login_required
 def cardapio():
     return render_template('cardapio.html', username=current_user.username)
+
+@app.route('/cardapio/publico')
+def cardapio_publico():
+    itens_ativos = CardapioItem.query.filter_by(ativo=True).order_by(CardapioItem.nome).all()
+    return render_template('cardapio_publico.html', itens=itens_ativos)
 
 # --- APIs ---
 @app.route('/api/tarefas', methods=['GET'])
@@ -153,7 +172,7 @@ def delete_tarefa(tarefa_id):
 @login_required
 def get_ingredientes():
     ingredientes = Ingrediente.query.order_by(Ingrediente.nome).all()
-    return jsonify([{'id': ing.id, 'nome': ing.nome, 'preco_pacote': ing.preco_pacote, 'quantidade_pacote': ing.quantidade_pacote, 'unidade_medida': ing.unidade_medida, 'custo_unitario_base': ing.custo_unitario_base} for ing in ingredientes])
+    return jsonify([{'id': ing.id, 'nome': ing.nome, 'unidade_medida': ing.unidade_medida} for ing in ingredientes])
 
 @app.route('/api/ingredientes', methods=['POST'])
 @login_required
@@ -220,14 +239,55 @@ def delete_item_receita(item_id):
     produto.calcular_custo_total()
     return jsonify({'status': 'sucesso'})
 
-@app.route('/api/produto/<int:produto_id>', methods=['DELETE'])
+@app.route('/api/cardapio', methods=['GET'])
 @login_required
-def delete_produto(produto_id):
-    produto = Produto.query.get_or_404(produto_id)
-    db.session.delete(produto)
+def get_cardapio_itens():
+    itens = CardapioItem.query.order_by(CardapioItem.nome).all()
+    return jsonify([{'id': i.id, 'nome': i.nome, 'descricao': i.descricao, 'valor': i.valor, 'foto': i.foto, 'ativo': i.ativo} for i in itens])
+
+@app.route('/api/cardapio', methods=['POST'])
+@login_required
+def add_cardapio_item():
+    dados = request.get_json()
+    novo_item = CardapioItem(
+        nome=dados['nome'],
+        descricao=dados['descricao'],
+        valor=float(dados['valor']),
+        foto=dados.get('foto')
+    )
+    db.session.add(novo_item)
     db.session.commit()
-    return jsonify({'status': 'sucesso', 'mensagem': 'Produto removido com sucesso.'})
+    return jsonify({'status': 'sucesso'}), 201
+
+@app.route('/api/cardapio/<int:item_id>', methods=['PUT'])
+@login_required
+def update_cardapio_item(item_id):
+    item = CardapioItem.query.get_or_404(item_id)
+    dados = request.get_json()
+    item.nome = dados['nome']
+    item.descricao = dados['descricao']
+    item.valor = float(dados['valor'])
+    item.foto = dados.get('foto')
+    db.session.commit()
+    return jsonify({'status': 'sucesso'})
+
+@app.route('/api/cardapio/<int:item_id>/toggle', methods=['PATCH'])
+@login_required
+def toggle_cardapio_item(item_id):
+    item = CardapioItem.query.get_or_404(item_id)
+    item.ativo = not item.ativo
+    db.session.commit()
+    return jsonify({'status': 'sucesso', 'novo_estado': item.ativo})
+
+@app.route('/api/cardapio/<int:item_id>', methods=['DELETE'])
+@login_required
+def delete_cardapio_item(item_id):
+    item = CardapioItem.query.get_or_404(item_id)
+    db.session.delete(item)
+    db.session.commit()
+    return jsonify({'status': 'sucesso'})
     
+# --- Comandos de Terminal ---
 @app.cli.command('create-db')
 def create_db():
     db.create_all()
