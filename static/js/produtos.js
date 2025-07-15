@@ -1,49 +1,86 @@
-// /montaki_agenda/static/js/produtos.js
-
 document.addEventListener('DOMContentLoaded', () => {
-    // Elementos da página
-    const listaProdutosElement = document.getElementById('lista-produtos');
+    // Elementos principais da página
+    const productGrid = document.getElementById('product-grid');
     const btnNovoProduto = document.getElementById('btn-novo-produto');
-    const placeholderView = document.getElementById('placeholder-produto');
-    const detalheView = document.getElementById('detalhe-view');
-    const nomeProdutoElement = document.getElementById('nome-produto');
-    const custoProdutoElement = document.getElementById('custo-produto');
-    const corpoTabelaReceita = document.getElementById('corpo-tabela-receita');
-    const formAddIngrediente = document.getElementById('form-add-ingrediente-receita');
+
+    // Elementos do Modal
+    const recipeModal = document.getElementById('recipe-modal');
+    const modalCloseBtn = document.getElementById('modal-recipe-close');
+    const modalTitle = document.getElementById('modal-recipe-title');
+    const modalCost = document.getElementById('modal-recipe-cost');
+    const recipeItemsBody = document.getElementById('recipe-items-body');
+    const formAddIngredient = document.getElementById('form-add-ingredient-to-recipe');
     const buscaIngredienteInput = document.getElementById('busca-ingrediente');
     const datalistIngredientes = document.getElementById('datalist-ingredientes');
     const quantidadeIngredienteInput = document.getElementById('quantidade-ingrediente');
     const unidadeSelecionadaSpan = document.getElementById('unidade-selecionada');
 
-    // Variáveis de estado
-    let produtoSelecionadoId = null;
     let todosIngredientes = [];
+    let produtoSelecionadoId = null;
 
-    // --- FUNÇÕES PRINCIPAIS ---
+    const formatarPreco = (valor) => `R$ ${valor.toFixed(2)}`;
 
-    // Carrega a lista de produtos na barra lateral
+    // Carrega os produtos e os exibe como cartões
     const carregarProdutos = async () => {
         const response = await fetch('/api/produtos');
         const produtos = await response.json();
-        
-        listaProdutosElement.innerHTML = '';
+        productGrid.innerHTML = '';
+        if (produtos.length === 0) {
+            productGrid.innerHTML = '<p>Nenhum produto cadastrado. Clique em "Adicionar Novo Produto" para começar.</p>';
+        }
         produtos.forEach(produto => {
-            const li = document.createElement('li');
-            li.textContent = produto.nome;
-            li.dataset.id = produto.id;
-            if (produto.id === produtoSelecionadoId) {
-                li.classList.add('active');
-            }
-            li.addEventListener('click', () => selecionarProduto(produto.id));
-            listaProdutosElement.appendChild(li);
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.innerHTML = `
+                <h4>${produto.nome}</h4>
+                <p>Clique para ver/editar a receita</p>
+            `;
+            card.addEventListener('click', () => abrirModalReceita(produto.id));
+            productGrid.appendChild(card);
         });
     };
 
-    // Carrega todos os ingredientes disponíveis para o formulário de busca
+    // Abre e preenche o modal com os detalhes da receita
+    const abrirModalReceita = async (id) => {
+        produtoSelecionadoId = id;
+        const response = await fetch(`/api/produto/${id}`);
+        const produto = await response.json();
+
+        modalTitle.textContent = `Receita de ${produto.nome}`;
+        modalCost.textContent = `Custo Total: ${formatarPreco(produto.custo_total)}`;
+        recipeItemsBody.innerHTML = '';
+        produto.receita.forEach(item => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${item.ingrediente_nome}</td>
+                <td>${item.quantidade} ${item.unidade_medida}</td>
+                <td>${formatarPreco(item.custo_item)}</td>
+                <td><button class="button-danger small-btn" data-item-id="${item.item_id}"><i class="fa-solid fa-trash-can"></i></button></td>
+            `;
+            tr.querySelector('button').addEventListener('click', () => deletarItemReceita(item.item_id));
+            recipeItemsBody.appendChild(tr);
+        });
+
+        recipeModal.style.display = 'flex';
+    };
+
+    const fecharModalReceita = () => {
+        recipeModal.style.display = 'none';
+        produtoSelecionadoId = null;
+        carregarProdutos(); // Recarrega os produtos para atualizar o custo se necessário
+    };
+    
+    // Deleta um ingrediente da receita
+    const deletarItemReceita = async (itemId) => {
+        if (!confirm('Remover este ingrediente da receita?')) return;
+        await fetch(`/api/receita_item/${itemId}`, { method: 'DELETE' });
+        abrirModalReceita(produtoSelecionadoId); // Recarrega os detalhes no modal
+    };
+
+    // Carrega todos os ingredientes para a busca
     const carregarTodosIngredientes = async () => {
         const response = await fetch('/api/ingredientes');
         todosIngredientes = await response.json();
-        
         datalistIngredientes.innerHTML = '';
         todosIngredientes.forEach(ing => {
             const option = document.createElement('option');
@@ -53,56 +90,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // Exibe os detalhes de um produto selecionado
-    const selecionarProduto = async (id) => {
-        produtoSelecionadoId = id;
-        carregarProdutos(); // Para destacar o item ativo
-
-        const response = await fetch(`/api/produto/${id}`);
-        const produto = await response.json();
-
-        // Preenche os detalhes do produto
-        nomeProdutoElement.textContent = produto.nome;
-        custoProdutoElement.textContent = `Custo Total: R$ ${produto.custo_total.toFixed(2)}`;
-
-        // Preenche a tabela da receita
-        corpoTabelaReceita.innerHTML = '';
-        produto.receita.forEach(item => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${item.ingrediente_nome}</td>
-                <td>${item.quantidade} ${item.unidade_medida}</td>
-                <td>R$ ${item.custo_item.toFixed(2)}</td>
-                <td>
-                    <button class="button-danger small-btn" data-item-id="${item.item_id}">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
-                </td>
-            `;
-            // Adiciona evento ao botão de deletar
-            tr.querySelector('.button-danger').addEventListener('click', () => deletarItemReceita(item.item_id));
-            corpoTabelaReceita.appendChild(tr);
-        });
-
-        // Mostra a tela de detalhes
-        placeholderView.style.display = 'none';
-        detalheView.style.display = 'block';
-    };
-
-    // Deleta um item da receita
-    const deletarItemReceita = async (itemId) => {
-        if (!confirm('Tem certeza que deseja remover este ingrediente da receita?')) return;
-        
-        await fetch(`/api/receita_item/${itemId}`, { method: 'DELETE' });
-        selecionarProduto(produtoSelecionadoId); // Recarrega os detalhes do produto
-    };
-
-    // --- EVENT LISTENERS ---
-
-    // Botão de criar novo produto
+    // Event Listeners
     btnNovoProduto.addEventListener('click', async () => {
         const nome = prompt('Digite o nome do novo produto:');
-        if (nome && nome.trim() !== '') {
+        if (nome && nome.trim()) {
             await fetch('/api/produtos', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -112,45 +103,39 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Formulário para adicionar ingrediente à receita
-    formAddIngrediente.addEventListener('submit', async (e) => {
+    modalCloseBtn.addEventListener('click', fecharModalReceita);
+    recipeModal.addEventListener('click', (e) => {
+        if (e.target === recipeModal) fecharModalReceita();
+    });
+
+    formAddIngredient.addEventListener('submit', async (e) => {
         e.preventDefault();
         const nomeIngrediente = buscaIngredienteInput.value;
-        const quantidade = quantidadeIngredienteInput.value;
-
-        const ingredienteSelecionado = todosIngredientes.find(ing => ing.nome === nomeIngrediente);
-
-        if (!ingredienteSelecionado) {
-            alert('Ingrediente não encontrado. Por favor, selecione um da lista.');
+        const ingrediente = todosIngredientes.find(ing => ing.nome === nomeIngrediente);
+        if (!ingrediente) {
+            alert('Ingrediente inválido. Selecione um da lista.');
             return;
         }
-
+        const dados = {
+            ingrediente_id: ingrediente.id,
+            quantidade: quantidadeIngredienteInput.value
+        };
         await fetch(`/api/produto/${produtoSelecionadoId}/ingrediente`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                ingrediente_id: ingredienteSelecionado.id,
-                quantidade: quantidade
-            })
+            body: JSON.stringify(dados)
         });
-
-        formAddIngrediente.reset();
+        formAddIngredient.reset();
         unidadeSelecionadaSpan.textContent = 'g/ml/un';
-        selecionarProduto(produtoSelecionadoId); // Recarrega os detalhes
+        abrirModalReceita(produtoSelecionadoId);
     });
 
-    // Atualiza a unidade de medida no formulário quando um ingrediente é selecionado
     buscaIngredienteInput.addEventListener('input', () => {
         const ingrediente = todosIngredientes.find(ing => ing.nome === buscaIngredienteInput.value);
-        if (ingrediente) {
-            unidadeSelecionadaSpan.textContent = ingrediente.unidade_medida;
-        } else {
-            unidadeSelecionadaSpan.textContent = 'g/ml/un';
-        }
+        unidadeSelecionadaSpan.textContent = ingrediente ? ingrediente.unidade_medida : 'g/ml/un';
     });
 
-
-    // --- INICIALIZAÇÃO ---
+    // Cargas iniciais
     carregarProdutos();
     carregarTodosIngredientes();
 });

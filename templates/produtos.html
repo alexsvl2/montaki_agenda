@@ -10,72 +10,64 @@
 <body>
     <div class="page-container">
         <div class="header">
-            {% if show_back_button %}
-                <a href="{{ url_for('home') }}" class="back-button" title="Voltar ao Menu">&#x2190;</a>
-                <a href="{{ url_for('menu') }}" class="back-button" title="Voltar ao Menu de Cadastros">&#x2190;</a>
-            {% endif %}
-            <h2>Gestão de Produtos</h2>
+            <a href="{{ url_for('menu') }}" class="back-button" title="Voltar ao Menu de Cadastros">&#x2190;</a>
+            <h2>Meus Produtos</h2>
             <div class="user-info">
                 <span>Olá, {{ username }}!</span>
                 <a href="{{ url_for('logout') }}">Sair</a>
             </div>
         </div>
 
-        <div class="product-layout">
-            <aside class="product-sidebar">
-                <div class="sidebar-header">
-                    <h4>Meus Produtos</h4>
-                    <button id="btn-novo-produto" class="button-primary small-btn">+</button>
+        <main class="content-wrapper">
+            <div class="page-actions">
+                <button id="btn-novo-produto" class="button-primary">
+                    <i class="fas fa-plus"></i> Adicionar Novo Produto
+                </button>
+            </div>
+            
+            <div id="product-grid" class="product-grid">
                 </div>
-                <ul id="lista-produtos" class="product-list">
-                    </ul>
-            </aside>
+        </main>
+    </div>
 
-            <main id="detalhe-produto-container" class="product-main-content">
-                <div id="placeholder-produto" class="placeholder-view">
-                    <i class="fa-solid fa-cookie-bite"></i>
-                    <p>Selecione um produto da lista ou crie um novo para começar.</p>
+    <div id="recipe-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-recipe-title">Receita do Produto</h3>
+                <button id="modal-recipe-close" class="modal-close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h4 id="modal-recipe-cost">Custo Total: R$ 0.00</h4>
+                <div class="card">
+                    <h4>Ingredientes da Receita</h4>
+                    <table class="recipe-table">
+                        <thead>
+                            <tr>
+                                <th>Ingrediente</th>
+                                <th>Quantidade</th>
+                                <th>Custo</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recipe-items-body"></tbody>
+                    </table>
                 </div>
-
-                <div id="detalhe-view" style="display: none;">
-                    <div class="card">
-                        <h3 id="nome-produto">Nome do Produto</h3>
-                        <h4 id="custo-produto">Custo Total: R$ 0.00</h4>
-                    </div>
-
-                    <div class="card">
-                        <h4>Receita</h4>
-                        <table class="recipe-table">
-                            <thead>
-                                <tr>
-                                    <th>Ingrediente</th>
-                                    <th>Quantidade</th>
-                                    <th>Custo do Item</th>
-                                    <th>Ação</th>
-                                </tr>
-                            </thead>
-                            <tbody id="corpo-tabela-receita">
-                                </tbody>
-                        </table>
-                    </div>
-
-                    <div class="card">
-                        <h4>Adicionar Ingrediente à Receita</h4>
-                        <form id="form-add-ingrediente-receita" class="form-grid">
-                            <div class="form-group">
-                                <label for="busca-ingrediente">Buscar Ingrediente</label>
-                                <input type="text" id="busca-ingrediente" list="datalist-ingredientes" placeholder="Digite para buscar..." required>
-                                <datalist id="datalist-ingredientes"></datalist>
-                            </div>
-                            <div class="form-group">
-                                <label for="quantidade-ingrediente">Quantidade (<span id="unidade-selecionada">g/ml/un</span>)</label>
-                                <input type="number" id="quantidade-ingrediente" step="0.01" placeholder="Ex: 150" required>
-                            </div>
-                            <button type="submit" class="button-primary">Adicionar à Receita</button>
-                        </form>
-                    </div>
+                <div class="card">
+                    <h4>Adicionar Ingrediente</h4>
+                    <form id="form-add-ingredient-to-recipe">
+                        <div class="form-group">
+                            <label for="busca-ingrediente">Buscar Ingrediente</label>
+                            <input type="text" id="busca-ingrediente" list="datalist-ingredientes" placeholder="Digite para buscar..." required>
+                            <datalist id="datalist-ingredientes"></datalist>
+                        </div>
+                        <div class="form-group">
+                            <label>Quantidade (<span id="unidade-selecionada">g/ml/un</span>)</label>
+                            <input type="number" id="quantidade-ingrediente" step="0.01" required>
+                        </div>
+                        <button type="submit" class="button-primary small-btn">Adicionar</button>
+                    </form>
                 </div>
-            </main>
+            </div>
         </div>
     </div>
 
