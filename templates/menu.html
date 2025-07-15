@@ -3,14 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu Principal - Montaki Confeitaria</title>
+    <title>Menu de Cadastros - Montaki</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body class="login-body">
     <div class="dashboard-container">
         <div class="header">
-            <h2>Montaki Confeitaria</h2>
+            {% if show_back_button %}
+                <a href="{{ url_for('home') }}" class="back-button" title="Voltar ao Menu Principal">&#x2190;</a>
+            {% endif %}
+            <h2>Menu de Cadastros</h2>
             <div class="user-info">
                 <span>Olá, {{ username }}!</span>
                 <a href="{{ url_for('logout') }}">Sair</a>
@@ -18,15 +21,17 @@
         </div>
 
         <div class="dashboard-menu">
-            <a href="{{ url_for('calendario') }}" class="menu-link">
-                <div class="menu-item agenda">
-                    <i class="fa-solid fa-calendar-days"></i>
-                    <span>Agenda</span>
+            <a href="{{ url_for('calculadora') }}" class="menu-link">
+                <div class="menu-item calculadora">
+                    <i class="fa-solid fa-wheat-awn"></i>
+                    <span>Cadastro Ingredientes</span>
                 </div>
             </a>
             
-            <a href="{{ url_for('menu') }}" class="menu-link">
-                <div class="menu-item produtos"> <i class="fa-solid fa-clipboard-list"></i> <span>Menu</span>
+            <a href="{{ url_for('produtos') }}" class="menu-link">
+                <div class="menu-item produtos">
+                    <i class="fa-solid fa-cake-candles"></i>
+                    <span>Cadastro Produtos</span>
                 </div>
             </a>
         </div>

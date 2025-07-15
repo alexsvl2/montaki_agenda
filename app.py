@@ -1,5 +1,3 @@
-# /montaki_agenda/app.py
-
 import os
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
@@ -7,11 +5,9 @@ from flask_migrate import Migrate
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
-# --- CONFIGURAÇÃO INICIAL ---
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-# Usando o caminho absoluto para o banco de dados para evitar qualquer ambiguidade no servidor.
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////home/alexsvl/montaki_agenda/agenda.db'
 app.config['SECRET_KEY'] = 'sua-chave-secreta-super-dificil'
 
@@ -21,7 +17,6 @@ login_manager.init_app(app)
 login_manager.login_view = 'login'
 migrate = Migrate(app, db)
 
-# --- MODELOS DO BANCO DE DADOS ---
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -79,7 +74,6 @@ def login():
             login_user(user)
             return redirect(url_for('home'))
         else:
-            # Em vez de redirecionar, renderiza a página de novo com uma mensagem de erro
             error = 'Usuário ou senha inválidos.'
             
     return render_template('login.html', error=error)
@@ -101,6 +95,11 @@ def calendario(): return render_template('calendario.html', username=current_use
 @app.route('/calculadora')
 @login_required
 def calculadora(): return render_template('calculadora.html', username=current_user.username, show_back_button=True)
+
+@app.route('/menu')
+@login_required
+def menu():
+    return render_template('menu.html', username=current_user.username, show_back_button=True)
 
 @app.route('/produtos')
 @login_required
@@ -216,7 +215,6 @@ def delete_item_receita(item_id):
     produto.calcular_custo_total()
     return jsonify({'status': 'sucesso'})
     
-# --- Comandos de Terminal ---
 @app.cli.command('create-db')
 def create_db():
     db.create_all()

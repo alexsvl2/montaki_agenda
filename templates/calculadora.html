@@ -11,7 +11,8 @@
     <div class="page-container">
         <div class="header">
             {% if show_back_button %}
-                <a href="{{ url_for('home') }}" class="back-button" title="Voltar ao Menu">&#x2190;</a>
+                <a href="{{ url_for('home') }}" class="back-button" title="Voltar ao Menu Principal">&#x2190;</a>
+                <a href="{{ url_for('menu') }}" class="back-button" title="Voltar ao Menu de Cadastros">&#x2190;</a>
             {% endif %}
             <h2>Calculadora de Custos</h2>
             <div class="user-info">
