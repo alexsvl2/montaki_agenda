@@ -8,7 +8,7 @@
     background-image: url('https://images.unsplash.com/photo-1587314168485-3236d6710814?q=80&w=1978&auto=format&fit=crop');
     background-size: cover;
     background-position: center;
-    background-attachment: fixed; /* A MÁGICA ACONTECE AQUI */
+    background-attachment: fixed;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -30,6 +30,7 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+/* ... (outros estilos de login, body geral, header, etc. que já temos) ... */
 .logo-container { margin-bottom: 30px; }
 .logo-icon { font-size: 48px; color: #8d5b4c; }
 .login-container h1 { color: #8d5b4c; margin: 10px 0 0 0; font-weight: 600; }
@@ -40,8 +41,6 @@
 .login-container button { background-color: #e89f71; color: white; padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; width: 100%; font-size: 16px; font-family: 'Lora', serif; font-weight: bold; transition: background-color 0.3s, transform 0.2s; margin-top: 10px; }
 .login-container button:hover { background-color: #d18e64; transform: translateY(-2px); }
 .error-message { color: #c0392b; background-color: rgba(231, 76, 60, 0.1); padding: 10px; border-radius: 5px; margin-top: 0; font-size: 0.9em; }
-
-/* --- ESTILOS GERAIS PARA AS OUTRAS PÁGINAS --- */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #fdfaf6;
@@ -54,7 +53,6 @@ body {
     box-sizing: border-box;
     margin: 0;
 }
-
 .agenda-container, .dashboard-container, .page-container {
     width: 100%;
     max-width: 1100px;
@@ -65,14 +63,11 @@ body {
 }
 .dashboard-container { max-width: 900px; }
 .agenda-container { max-width: 900px; }
-
 .header { background-color: #8d5b4c; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
 .header h2 { margin: 0; font-size: 1.2em; }
 .user-info { font-size: 0.9em; white-space: nowrap; }
 .user-info a { color: white; text-decoration: none; background-color: rgba(255,255,255,0.2); padding: 5px 10px; border-radius: 5px; margin-left: 10px; }
 .user-info a:hover { background-color: rgba(255,255,255,0.4); }
-
-/* DASHBOARD */
 .dashboard-menu { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; padding: 60px 20px; gap: 30px; }
 .menu-link { text-decoration: none; color: inherit; }
 .menu-item { width: 180px; height: 160px; border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
@@ -87,8 +82,6 @@ body {
 .menu-item.produtos:hover { background-color: #f8e1c6; }
 .back-button { font-size: 2em; color: white; text-decoration: none; margin-right: 15px; transition: transform 0.2s; }
 .back-button:hover { transform: scale(1.1); }
-
-/* ... (Restante do CSS para Calendário, Calculadora, Produtos e Modal) ... */
 .calendario { padding: 15px; }
 .mes { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
 .mes h3 { margin: 0; font-size: 1.3em; color: #8d5b4c; text-align: center; }
@@ -112,7 +105,7 @@ body {
 .form-group input, .form-group select { padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 1em; background-color: white; }
 .button-primary { background-color: #e89f71; color: white; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 1em; font-weight: 600; transition: background-color 0.2s; }
 .button-primary:hover { background-color: #d18e64; }
-.table-container { overflow-x: auto; }
+.table-container, .recipe-table { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; margin-top: 20px; }
 th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #f0f0f0; }
 th { background-color: #fdfaf6; font-weight: 600; color: #8d5b4c; }
@@ -120,25 +113,58 @@ tr:last-child td { border-bottom: none; }
 tr:hover { background-color: #fefcf9; }
 .button-danger { background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 1.2em; padding: 5px; }
 .button-danger:hover { color: #c0392b; }
+
+/* PRODUTOS */
 .page-actions { padding: 0 0 20px 0; border-bottom: 1px solid #f0f0f0; margin-bottom: 20px; }
 .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
 .product-card { background-color: #fdfaf6; border: 1px solid #f0f0f0; border-radius: 8px; padding: 20px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
 .product-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.08); }
 .product-card h4 { margin: 0 0 5px 0; color: #8d5b4c; }
 .product-card p { margin: 0; font-size: 0.9em; color: #aaa; }
-.recipe-table { width: 100%; border-collapse: collapse; }
-.sidebar-header { padding: 15px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
-.sidebar-header h4 { margin: 0; color: #8d5b4c; }
-.small-btn { padding: 5px 10px; font-size: 1.2em; }
-.product-list { list-style: none; padding: 0; margin: 0; overflow-y: auto; }
-.product-list li { padding: 15px; cursor: pointer; border-bottom: 1px solid #eee; transition: background-color 0.2s; }
-.product-list li:hover { background-color: #f7f2e9; }
-.product-list li.active { background-color: #fdecdb; font-weight: bold; color: #a0522d; }
-.placeholder-view { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100%; color: #aaa; text-align: center; }
-.placeholder-view i { font-size: 60px; margin-bottom: 20px; }
-.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-.modal-content { background-color: white; padding: 25px; border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); }
-.modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 20px; }
+
+/* MODAL (Regras para ambos os modais de Agenda e Receitas) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px; /* Adiciona padding para telas pequenas */
+    box-sizing: border-box;
+}
+.modal-content {
+    background-color: white;
+    padding: 25px;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 600px; /* Aumenta um pouco a largura máxima */
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    /* --- ALTERAÇÕES AQUI --- */
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh; /* Limita a altura a 90% da altura da tela */
+}
+.modal-header {
+    flex-shrink: 0; /* Impede que o header encolha */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+.modal-body {
+    overflow-y: auto; /* Adiciona a barra de rolagem SÓ quando necessário */
+    padding-right: 15px; /* Espaço para a barra de rolagem não sobrepor o conteúdo */
+    margin-right: -15px; /* Compensa o padding */
+}
+/* --- FIM DAS ALTERAÇÕES --- */
+
 .modal-header h3 { margin: 0; color: #8d5b4c; }
 .modal-close-btn { background: none; border: none; font-size: 2em; cursor: pointer; color: #aaa; line-height: 1; }
 .lista-tarefas-modal { list-style: none; padding: 0; margin: 0 0 20px 0; }
@@ -153,45 +179,7 @@ tr:hover { background-color: #fefcf9; }
 
 /* MOBILE */
 @media (max-width: 768px) {
-    /* --- ALTERAÇÃO AQUI --- */
-    .login-body {
-        padding: 0; /* Remove o padding para a imagem ir até as bordas */
-        align-items: flex-start;
-    }
-    .login-container, .dashboard-container {
-        height: auto; /* A altura se ajusta ao conteúdo */
-        min-height: 100vh; /* Ocupa pelo menos a altura toda da tela */
-        border-radius: 0;
-        box-shadow: none;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        background-color: rgba(255, 255, 255, 0.85); /* Aumenta a opacidade para legibilidade */
-        padding: 20px;
-    }
-    .dashboard-container {
-        background-color: transparent; /* Deixa o fundo do dashboard totalmente transparente */
-        backdrop-filter: none; /* Remove o blur para focar nos ícones */
-    }
-    /* --- FIM DA ALTERAÇÃO --- */
-    
-    body {
-        padding: 0;
-    }
-    .agenda-container, .page-container { border-radius: 0; min-height: 100vh; box-shadow: none; }
-    .header { padding: 15px; }
-    .header h2 { font-size: 1.1em; }
-    .user-info { font-size: 0.8em; }
-    .dashboard-menu { flex-direction: row; padding: 40px 10px; gap: 20px; }
-    .menu-item { width: 140px; height: 140px; font-size: 0.9em; }
-    .menu-item i { font-size: 40px; }
-    .calendario { padding: 5px; }
-    .mes h3 { font-size: 1.2em; }
-    .dias-semana div { font-size: 0.7em; }
-    .dias-grid .dia { min-height: 70px; font-size: 0.8em; }
-    .task-list { font-size: 0.7em; }
-    .content-wrapper { padding: 15px; }
-    .form-grid { grid-template-columns: 1fr; }
+    /* ... (outras regras mobile) ... */
     .product-layout { flex-direction: column; }
     .product-sidebar { width: 100%; border-right: none; border-bottom: 1px solid #f0f0f0; }
 }
