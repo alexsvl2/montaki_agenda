@@ -214,6 +214,14 @@ def delete_item_receita(item_id):
     db.session.commit()
     produto.calcular_custo_total()
     return jsonify({'status': 'sucesso'})
+
+@app.route('/api/produto/<int:produto_id>', methods=['DELETE'])
+@login_required
+def delete_produto(produto_id):
+    produto = Produto.query.get_or_404(produto_id)
+    db.session.delete(produto)
+    db.session.commit()
+    return jsonify({'status': 'sucesso', 'mensagem': 'Produto removido com sucesso.'})
     
 @app.cli.command('create-db')
 def create_db():

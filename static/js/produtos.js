@@ -1,3 +1,5 @@
+// /montaki_agenda/static/js/produtos.js
+
 document.addEventListener('DOMContentLoaded', () => {
     // Elementos principais da página
     const productGrid = document.getElementById('product-grid');
@@ -15,8 +17,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const quantidadeIngredienteInput = document.getElementById('quantidade-ingrediente');
     const unidadeSelecionadaSpan = document.getElementById('unidade-selecionada');
 
-    let todosIngredientes = [];
+    // Variáveis de estado
     let produtoSelecionadoId = null;
+    let todosIngredientes = [];
 
     const formatarPreco = (valor) => `R$ ${valor.toFixed(2)}`;
 
@@ -24,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const carregarProdutos = async () => {
         const response = await fetch('/api/produtos');
         const produtos = await response.json();
+        
         productGrid.innerHTML = '';
         if (produtos.length === 0) {
             productGrid.innerHTML = '<p>Nenhum produto cadastrado. Clique em "Adicionar Novo Produto" para começar.</p>';
@@ -31,13 +35,35 @@ document.addEventListener('DOMContentLoaded', () => {
         produtos.forEach(produto => {
             const card = document.createElement('div');
             card.className = 'product-card';
+            
+            // Adiciona o botão de deletar no canto e o conteúdo em um container separado
             card.innerHTML = `
-                <h4>${produto.nome}</h4>
-                <p>Clique para ver/editar a receita</p>
+                <button class="button-delete-card" data-id="${produto.id}" title="Excluir Produto">&times;</button>
+                <div class="card-content">
+                    <h4>${produto.nome}</h4>
+                    <p>Clique para ver/editar a receita</p>
+                </div>
             `;
-            card.addEventListener('click', () => abrirModalReceita(produto.id));
+
+            // Adiciona evento de clique para abrir o modal (apenas no conteúdo do card)
+            card.querySelector('.card-content').addEventListener('click', () => abrirModalReceita(produto.id));
+            
+            // Adiciona evento de clique para o novo botão de deletar
+            card.querySelector('.button-delete-card').addEventListener('click', (e) => {
+                e.stopPropagation(); // Impede que o clique no botão também abra o modal
+                deletarProduto(produto.id, produto.nome);
+            });
+
             productGrid.appendChild(card);
         });
+    };
+    
+    // Função para deletar o produto inteiro
+    const deletarProduto = async (id, nome) => {
+        if (confirm(`Tem certeza que deseja excluir o produto "${nome}" e toda a sua receita? Esta ação não pode ser desfeita.`)) {
+            await fetch(`/api/produto/${id}`, { method: 'DELETE' });
+            carregarProdutos(); // Recarrega a lista de produtos
+        }
     };
 
     // Abre e preenche o modal com os detalhes da receita
@@ -67,17 +93,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const fecharModalReceita = () => {
         recipeModal.style.display = 'none';
         produtoSelecionadoId = null;
-        carregarProdutos(); // Recarrega os produtos para atualizar o custo se necessário
+        carregarProdutos();
     };
     
-    // Deleta um ingrediente da receita
     const deletarItemReceita = async (itemId) => {
         if (!confirm('Remover este ingrediente da receita?')) return;
         await fetch(`/api/receita_item/${itemId}`, { method: 'DELETE' });
-        abrirModalReceita(produtoSelecionadoId); // Recarrega os detalhes no modal
+        abrirModalReceita(produtoSelecionadoId);
     };
 
-    // Carrega todos os ingredientes para a busca
     const carregarTodosIngredientes = async () => {
         const response = await fetch('/api/ingredientes');
         todosIngredientes = await response.json();
