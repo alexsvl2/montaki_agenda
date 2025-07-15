@@ -181,6 +181,153 @@ tr:hover { background-color: #fefcf9; }
 .btn-delete { color: #e74c3c; }
 .btn-delete:hover { color: #c0392b; }
 
+/* ======================================= */
+/* === ESTILOS PARA PÁGINA DE CARDÁPIO === */
+/* ======================================= */
+
+.page-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.button-secondary {
+    background-color: #a0a0a0;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+.button-secondary:hover {
+    background-color: #888;
+}
+
+.cardapio-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+.cardapio-card {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.3s;
+}
+.cardapio-card:hover {
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+.cardapio-card.disabled {
+    opacity: 0.5;
+}
+
+.cardapio-foto {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.cardapio-body {
+    padding: 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+.cardapio-body h4 {
+    margin: 0 0 10px 0;
+    color: #8d5b4c;
+}
+.cardapio-body p {
+    margin: 0 0 15px 0;
+    font-size: 0.9em;
+    flex-grow: 1;
+    color: #666;
+}
+
+.cardapio-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+}
+
+.cardapio-valor {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+}
+
+.cardapio-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Estilos para o Toggle Switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+}
+.switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+}
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+}
+input:checked + .slider {
+    background-color: #e89f71;
+}
+input:checked + .slider:before {
+    transform: translateX(22px);
+}
+.slider.round { border-radius: 34px; }
+.slider.round:before { border-radius: 50%; }
+
+/* Ajustes no formulário do modal */
+#item-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    resize: vertical;
+}
+.form-actions {
+    text-align: right;
+    margin-top: 20px;
+}
+
 /* MOBILE */
 @media (max-width: 768px) {
     /* ... (outras regras mobile) ... */
