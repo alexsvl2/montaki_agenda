@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 
 # --- CONFIGURAÇÃO INICIAL ---
 app = Flask(__name__)
@@ -18,6 +19,9 @@ else:
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'agenda.db')
 
 app.config['SECRET_KEY'] = 'sua-chave-secreta-super-dificil'
+app.config['UPLOAD_FOLDER'] = os.path.join(basedir, 'static/uploads')
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
 
 db = SQLAlchemy(app)
 login_manager = LoginManager()
@@ -169,13 +173,7 @@ def delete_tarefa(tarefa_id):
 @login_required
 def get_ingredientes():
     ingredientes = Ingrediente.query.order_by(Ingrediente.nome).all()
-    return jsonify([{'id': ing.id, 
-                     'nome': ing.nome, 
-                     'preco_pacote': ing.preco_pacote, 
-                     'quantidade_pacote': ing.quantidade_pacote, 
-                     'unidade_medida': ing.unidade_medida, 
-                     'custo_unitario_base': ing.custo_unitario_base
-                    } for ing in ingredientes])
+    return jsonify([{'id': ing.id, 'nome': ing.nome, 'unidade_medida': ing.unidade_medida} for ing in ingredientes])
 
 @app.route('/api/ingredientes', methods=['POST'])
 @login_required
@@ -241,7 +239,7 @@ def delete_item_receita(item_id):
     db.session.commit()
     produto.calcular_custo_total()
     return jsonify({'status': 'sucesso'})
-    
+
 @app.route('/api/cardapio', methods=['GET'])
 @login_required
 def get_cardapio_itens():
@@ -251,21 +249,16 @@ def get_cardapio_itens():
 @app.route('/api/cardapio', methods=['POST'])
 @login_required
 def add_cardapio_item():
-    # Os dados agora vêm de um formulário, não de um JSON
     nome = request.form.get('nome')
     descricao = request.form.get('descricao')
     valor = request.form.get('valor')
-    
     foto_salva = None
     if 'foto' in request.files:
         arquivo_foto = request.files['foto']
         if arquivo_foto.filename != '':
-            # Garante um nome de arquivo seguro
             filename = secure_filename(arquivo_foto.filename)
-            # Salva o arquivo na nossa pasta de uploads
             arquivo_foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             foto_salva = filename
-
     novo_item = CardapioItem(
         nome=nome,
         descricao=descricao,
@@ -280,18 +273,15 @@ def add_cardapio_item():
 @login_required
 def update_cardapio_item(item_id):
     item = CardapioItem.query.get_or_404(item_id)
-    
     item.nome = request.form.get('nome')
     item.descricao = request.form.get('descricao')
     item.valor = float(request.form.get('valor'))
-
     if 'foto' in request.files:
         arquivo_foto = request.files['foto']
         if arquivo_foto.filename != '':
             filename = secure_filename(arquivo_foto.filename)
             arquivo_foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            item.foto = filename # Atualiza o nome do arquivo da foto
-
+            item.foto = filename
     db.session.commit()
     return jsonify({'status': 'sucesso'})
 
@@ -310,7 +300,7 @@ def delete_cardapio_item(item_id):
     db.session.delete(item)
     db.session.commit()
     return jsonify({'status': 'sucesso'})
-
+    
 # --- Comandos de Terminal ---
 @app.cli.command('create-db')
 def create_db():
