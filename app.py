@@ -251,12 +251,26 @@ def get_cardapio_itens():
 @app.route('/api/cardapio', methods=['POST'])
 @login_required
 def add_cardapio_item():
-    dados = request.get_json()
+    # Os dados agora vêm de um formulário, não de um JSON
+    nome = request.form.get('nome')
+    descricao = request.form.get('descricao')
+    valor = request.form.get('valor')
+    
+    foto_salva = None
+    if 'foto' in request.files:
+        arquivo_foto = request.files['foto']
+        if arquivo_foto.filename != '':
+            # Garante um nome de arquivo seguro
+            filename = secure_filename(arquivo_foto.filename)
+            # Salva o arquivo na nossa pasta de uploads
+            arquivo_foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            foto_salva = filename
+
     novo_item = CardapioItem(
-        nome=dados['nome'],
-        descricao=dados['descricao'],
-        valor=float(dados['valor']),
-        foto=dados.get('foto')
+        nome=nome,
+        descricao=descricao,
+        valor=float(valor),
+        foto=foto_salva
     )
     db.session.add(novo_item)
     db.session.commit()
@@ -266,11 +280,18 @@ def add_cardapio_item():
 @login_required
 def update_cardapio_item(item_id):
     item = CardapioItem.query.get_or_404(item_id)
-    dados = request.get_json()
-    item.nome = dados['nome']
-    item.descricao = dados['descricao']
-    item.valor = float(dados['valor'])
-    item.foto = dados.get('foto')
+    
+    item.nome = request.form.get('nome')
+    item.descricao = request.form.get('descricao')
+    item.valor = float(request.form.get('valor'))
+
+    if 'foto' in request.files:
+        arquivo_foto = request.files['foto']
+        if arquivo_foto.filename != '':
+            filename = secure_filename(arquivo_foto.filename)
+            arquivo_foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            item.foto = filename # Atualiza o nome do arquivo da foto
+
     db.session.commit()
     return jsonify({'status': 'sucesso'})
 
