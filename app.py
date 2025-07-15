@@ -106,6 +106,11 @@ def menu():
 def produtos():
     return render_template('produtos.html', username=current_user.username, show_back_button=True)
 
+@app.route('/cardapio')
+@login_required
+def cardapio():
+    return render_template('cardapio.html', username=current_user.username)
+
 # --- APIs ---
 @app.route('/api/tarefas', methods=['GET'])
 @login_required
