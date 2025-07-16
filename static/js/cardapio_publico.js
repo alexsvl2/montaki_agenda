@@ -1,58 +1,63 @@
 document.addEventListener('DOMContentLoaded', () => {
-    
-    const WHATSAPP_NUMBER = '5519994221212';
+    const pedirButtons = document.querySelectorAll('.btn-pedir');
+    const cartItemCount = document.getElementById('cart-item-count');
 
-    const quantityInputs = document.querySelectorAll('.item-quantity');
-    const whatsappCart = document.getElementById('whatsapp-cart');
-    const cartSummary = document.getElementById('cart-summary');
-    const btnSendWhatsapp = document.getElementById('btn-send-whatsapp');
-
-    let pedido = {};
-
-    const atualizarCarrinho = () => {
-        pedido = {};
-        let totalItens = 0;
-
-        quantityInputs.forEach(input => {
-            const nome = input.dataset.nome;
-            const quantidade = parseInt(input.value, 10);
-
-            if (quantidade > 0) {
-                pedido[nome] = quantidade;
-                totalItens += quantidade;
-            }
-        });
+    // Função para atualizar a contagem de itens no ícone do carrinho
+    const atualizarContagemCarrinho = () => {
+        // Pega o carrinho do localStorage ou cria um objeto vazio se não existir
+        const carrinho = JSON.parse(localStorage.getItem('montakiCart')) || {};
+        // Soma as quantidades de todos os itens no carrinho
+        const totalItens = Object.values(carrinho).reduce((total, item) => total + item.quantidade, 0);
 
         if (totalItens > 0) {
-            cartSummary.textContent = `Seu pedido: ${totalItens} item(ns)`;
-            whatsappCart.style.display = 'flex';
+            cartItemCount.textContent = totalItens;
+            cartItemCount.style.display = 'block';
         } else {
-            whatsappCart.style.display = 'none';
+            cartItemCount.style.display = 'none';
         }
     };
 
-    const enviarPedidoWhatsApp = () => {
-        if (Object.keys(pedido).length === 0) {
-            alert('Seu carrinho está vazio. Adicione itens para fazer um pedido.');
-            return;
+    // Função para adicionar um item ao carrinho
+    const adicionarAoCarrinho = (e) => {
+        const button = e.currentTarget;
+        const id = button.dataset.id;
+        const nome = button.dataset.nome;
+        const valor = parseFloat(button.dataset.valor);
+
+        // Pega o carrinho do localStorage ou cria um novo
+        let carrinho = JSON.parse(localStorage.getItem('montakiCart')) || {};
+
+        // Se o item já está no carrinho, incrementa a quantidade. Se não, adiciona com quantidade 1.
+        if (carrinho[id]) {
+            carrinho[id].quantidade += 1;
+        } else {
+            carrinho[id] = {
+                nome: nome,
+                valor: valor,
+                quantidade: 1
+            };
         }
 
-        let mensagem = 'Olá, Montaki Confeitaria! Gostaria de fazer o seguinte pedido:\n\n';
-        for (const nome in pedido) {
-            mensagem += `• ${pedido[nome]}x - ${nome}\n`;
-        }
-        mensagem += '\nObrigado(a)!';
+        // Salva o carrinho atualizado de volta no localStorage
+        localStorage.setItem('montakiCart', JSON.stringify(carrinho));
 
-        const urlWhatsApp = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagem)}`;
-        
-        window.open(urlWhatsApp, '_blank');
+        // Atualiza o número no ícone do carrinho
+        atualizarContagemCarrinho();
+
+        // Dá um feedback visual para o usuário
+        button.textContent = 'Adicionado!';
+        button.disabled = true;
+        setTimeout(() => {
+            button.textContent = 'Pedir';
+            button.disabled = false;
+        }, 1000);
     };
 
-    // Adiciona um listener para cada campo de quantidade
-    quantityInputs.forEach(input => {
-        input.addEventListener('input', atualizarCarrinho);
+    // Adiciona o evento de clique a todos os botões "Pedir"
+    pedirButtons.forEach(button => {
+        button.addEventListener('click', adicionarAoCarrinho);
     });
 
-    // Adiciona o listener para o botão de enviar
-    btnSendWhatsapp.addEventListener('click', enviarPedidoWhatsApp);
+    // Atualiza a contagem no ícone assim que a página carrega
+    atualizarContagemCarrinho();
 });

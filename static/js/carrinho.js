@@ -1,7 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const WHATSAPP_NUMBER = '5519994221212';
+    // IMPORTANTE: Troque pelo seu número de WhatsApp no formato internacional
+    const WHATSAPP_NUMBER = '5519994221212'; // Ex: 55 (Brasil) + 11 (DDD) + 912345678 (Número)
     const deliveryFee = 5.00;
 
+    // Elementos da página
     const itemsContainer = document.getElementById('cart-items-container');
     const summaryCard = document.getElementById('cart-summary-card');
     const subtotalEl = document.getElementById('subtotal-value');
@@ -10,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const deliveryOptions = document.querySelectorAll('input[name="delivery_option"]');
     const sendButton = document.getElementById('send-whatsapp-order');
 
-    const formatarPreco = (valor) => `R$ ${valor.toFixed(2)}`;
+    const formatarPreco = (valor) => `R$ ${valor.toFixed(2).replace('.', ',')}`;
 
     const carregarCarrinho = () => {
         const carrinho = JSON.parse(localStorage.getItem('montakiCart')) || {};
@@ -35,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="cart-item-controls">
                     <input type="number" class="item-quantity-cart" data-id="${id}" value="${item.quantidade}" min="1" step="1">
-                    <button class="button-danger small-btn remove-item-btn" data-id="${id}"><i class="fas fa-trash-can"></i></button>
+                    <button class="button-danger small-btn remove-item-btn" data-id="${id}" title="Remover Item"><i class="fas fa-trash-can"></i></button>
                 </div>
             `;
             itemsContainer.appendChild(itemElement);
@@ -67,11 +69,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 const carrinho = JSON.parse(localStorage.getItem('montakiCart'));
                 if (novaQuantidade > 0) {
                     carrinho[id].quantidade = novaQuantidade;
+                    localStorage.setItem('montakiCart', JSON.stringify(carrinho));
+                    carregarCarrinho();
                 } else {
+                    // Se a quantidade for 0 ou menos, remove o item
                     delete carrinho[id];
+                    localStorage.setItem('montakiCart', JSON.stringify(carrinho));
+                    carregarCarrinho();
                 }
-                localStorage.setItem('montakiCart', JSON.stringify(carrinho));
-                carregarCarrinho();
             });
         });
 
@@ -98,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const deliveryType = document.getElementById('delivery').checked ? 'Delivery' : 'Retirada no local';
         const totalValue = finalTotalEl.textContent;
         
-        let mensagem = `Olá, Montaki Confeitaria! Gostaria de fazer o seguinte pedido:\n\n`;
+        let mensagem = `Olá, Montaki Confeitaria!\n\nGostaria de fazer o seguinte pedido:\n\n`;
         for (const id in carrinho) {
             const item = carrinho[id];
             mensagem += `• ${item.quantidade}x - ${item.nome}\n`;
