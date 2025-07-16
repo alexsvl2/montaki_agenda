@@ -134,6 +134,10 @@ def fazer_pedido(item_id):
     item = CardapioItem.query.get_or_404(item_id)
     return render_template('fazer_pedido.html', item=item)
 
+@app.route('/carrinho')
+def carrinho():
+    return render_template('carrinho.html')
+
 # --- APIs ---
 @app.route('/api/tarefas', methods=['GET'])
 @login_required
