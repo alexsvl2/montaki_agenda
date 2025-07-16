@@ -129,6 +129,11 @@ def cardapio_publico():
     itens_ativos = CardapioItem.query.filter_by(ativo=True).order_by(CardapioItem.nome).all()
     return render_template('cardapio_publico.html', itens=itens_ativos)
 
+@app.route('/fazer-pedido/<int:item_id>')
+def fazer_pedido(item_id):
+    item = CardapioItem.query.get_or_404(item_id)
+    return render_template('fazer_pedido.html', item=item)
+
 # --- APIs ---
 @app.route('/api/tarefas', methods=['GET'])
 @login_required
