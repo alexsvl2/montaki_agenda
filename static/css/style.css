@@ -427,6 +427,78 @@ input:checked + .slider:before {
     }
 }
 
+/* === ESTILOS PARA INTERAÇÃO NO CARDÁPIO PÚBLICO === */
+
+.public-item-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.quantity-selector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.quantity-selector label {
+    font-size: 0.9em;
+    color: #666;
+}
+
+.item-quantity {
+    width: 60px;
+    padding: 5px 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 1em;
+}
+
+.whatsapp-cart {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #252525;
+    color: white;
+    padding: 15px 25px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
+    z-index: 1001;
+}
+
+.whatsapp-cart span {
+    font-weight: bold;
+}
+
+.button-whatsapp {
+    background-color: #25D366;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1em;
+    transition: background-color 0.2s;
+}
+
+.button-whatsapp:hover {
+    background-color: #1DAE53;
+}
+
+.button-whatsapp i {
+    font-size: 1.2em;
+}
+
 /* MOBILE */
 @media (max-width: 768px) {
     /* ... (outras regras mobile) ... */

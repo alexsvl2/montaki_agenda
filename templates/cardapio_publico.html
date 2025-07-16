@@ -22,7 +22,13 @@
                 <div class="public-item-details">
                     <h3>{{ item.nome }}</h3>
                     <p>{{ item.descricao }}</p>
-                    <span class="public-item-price">R$ {{ "%.2f"|format(item.valor|float) }}</span>
+                    <div class="public-item-footer">
+                        <span class="public-item-price">R$ {{ "%.2f"|format(item.valor|float) }}</span>
+                        <div class="quantity-selector">
+                            <label for="item-{{ item.id }}">Qtd:</label>
+                            <input type="number" id="item-{{ item.id }}" class="item-quantity" data-nome="{{ item.nome }}" min="0" value="0" step="1">
+                        </div>
+                    </div>
                 </div>
             </div>
             {% endfor %}
@@ -33,5 +39,13 @@
         </footer>
     </div>
 
+    <div id="whatsapp-cart" class="whatsapp-cart" style="display: none;">
+        <span id="cart-summary">Seu pedido está vazio</span>
+        <button id="btn-send-whatsapp" class="button-whatsapp">
+            <i class="fab fa-whatsapp"></i> Enviar Pedido
+        </button>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/cardapio_publico.js') }}"></script>
 </body>
 </html>
