@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // IMPORTANTE: Troque o número abaixo pelo seu número de WhatsApp com código do país e DDD
-    const WHATSAPP_NUMBER = '5519912345678'; // Exemplo: 55 (Brasil) + 19 (DDD) + 912345678 (Número)
+    
+    const WHATSAPP_NUMBER = '5519994221212';
 
     const quantityInputs = document.querySelectorAll('.item-quantity');
     const whatsappCart = document.getElementById('whatsapp-cart');
