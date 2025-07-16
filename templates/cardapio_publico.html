@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cardápio - Montaki Confeitaria</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body class="public-menu-body">
+
+    <div class="public-menu-container">
+        <header class="public-menu-header">
+            <i class="fas fa-cookie-bite logo-icon"></i>
+            <h1>Cardápio Montaki Confeitaria</h1>
+        </header>
+
+        <main class="public-menu-grid">
+            {% for item in itens %}
+            <div class="public-item-card">
+                <img src="{{ url_for('static', filename='uploads/' + item.foto if item.foto else 'https://via.placeholder.com/400x300.png?text=Montaki') }}" alt="{{ item.nome }}" class="public-item-photo">
+                <div class="public-item-details">
+                    <h3>{{ item.nome }}</h3>
+                    <p>{{ item.descricao }}</p>
+                    <span class="public-item-price">R$ {{ "%.2f"|format(item.valor|float) }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </main>
+
+        <footer class="public-menu-footer">
+            <p>Montaki Confeitaria &copy; 2025</p>
+        </footer>
+    </div>
+
+</body>
+</html>
