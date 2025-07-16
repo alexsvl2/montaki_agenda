@@ -619,6 +619,76 @@ input:checked + .slider:before {
     font-size: 0.9em;
 }
 
+/* ========================================= */
+/* === ESTILOS PARA PÁGINA DE RESUMO DE PEDIDO === */
+/* ========================================= */
+
+.order-summary-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    align-items: flex-start;
+}
+
+.order-form-card {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.07);
+}
+
+.order-form-card h3 {
+    margin-top: 0;
+    color: #8d5b4c;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 15px;
+}
+
+.radio-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.radio-group input[type="radio"] {
+    margin-right: 10px;
+}
+
+.totals-summary {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px dashed #eee;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.1em;
+    margin-bottom: 10px;
+}
+
+.summary-row.total {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #333;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #ddd;
+}
+
+.large-btn {
+    width: 100%;
+    margin-top: 20px;
+    font-size: 1.1em !important;
+}
+
+/* Ajustes mobile para a página de pedido */
+@media (max-width: 768px) {
+    .order-summary-layout {
+        grid-template-columns: 1fr; /* Uma coluna em telas pequenas */
+    }
+}
+
 /* MOBILE */
 @media (max-width: 768px) {
     /* ... (outras regras mobile) ... */
