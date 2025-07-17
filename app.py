@@ -5,6 +5,7 @@ from flask_migrate import Migrate
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+from collections import defaultdict
 
 # --- CONFIGURAÇÃO INICIAL ---
 app = Flask(__name__)
@@ -72,6 +73,7 @@ class CardapioItem(db.Model):
     valor = db.Column(db.Float, nullable=False)
     foto = db.Column(db.String(200), nullable=True) 
     ativo = db.Column(db.Boolean, default=True, nullable=False)
+    categoria = db.Column(db.String(100), nullable=False, default='Geral')
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -126,17 +128,16 @@ def cardapio():
 
 @app.route('/cardapio/publico')
 def cardapio_publico():
-    itens_ativos = CardapioItem.query.filter_by(ativo=True).order_by(CardapioItem.nome).all()
-    return render_template('cardapio_publico.html', itens=itens_ativos)
+    itens_ativos = CardapioItem.query.filter_by(ativo=True).order_by(CardapioItem.categoria, CardapioItem.nome).all()
+    cardapio_agrupado = defaultdict(list)
+    for item in itens_ativos:
+        cardapio_agrupado[item.categoria].append(item)
+    return render_template('cardapio_publico.html', cardapio_agrupado=cardapio_agrupado)
 
 @app.route('/fazer-pedido/<int:item_id>')
 def fazer_pedido(item_id):
     item = CardapioItem.query.get_or_404(item_id)
     return render_template('fazer_pedido.html', item=item)
-
-@app.route('/carrinho')
-def carrinho():
-    return render_template('carrinho.html')
 
 # --- APIs ---
 @app.route('/api/tarefas', methods=['GET'])
@@ -176,12 +177,10 @@ def delete_tarefa(tarefa_id):
     db.session.commit()
     return jsonify({'status': 'sucesso'})
 
-# --- API DA CALCULADORA (CORRIGIDA) ---
 @app.route('/api/ingredientes', methods=['GET'])
 @login_required
 def get_ingredientes():
     ingredientes = Ingrediente.query.order_by(Ingrediente.nome).all()
-    # CORREÇÃO DEFINITIVA: Retornando todos os campos que o JavaScript precisa
     return jsonify([{'id': ing.id, 
                      'nome': ing.nome, 
                      'preco_pacote': ing.preco_pacote, 
@@ -208,7 +207,6 @@ def delete_ingrediente(id):
     db.session.commit()
     return jsonify({'status': 'sucesso'})
 
-# (O resto das APIs para Produtos e Cardápio continuam aqui)
 @app.route('/api/produtos', methods=['GET'])
 @login_required
 def get_produtos():
@@ -265,9 +263,7 @@ def get_cardapio_itens():
 @app.route('/api/cardapio', methods=['POST'])
 @login_required
 def add_cardapio_item():
-    nome = request.form.get('nome')
-    descricao = request.form.get('descricao')
-    valor = request.form.get('valor')
+    dados = request.form
     foto_salva = None
     if 'foto' in request.files:
         arquivo_foto = request.files['foto']
@@ -276,10 +272,11 @@ def add_cardapio_item():
             arquivo_foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             foto_salva = filename
     novo_item = CardapioItem(
-        nome=nome,
-        descricao=descricao,
-        valor=float(valor),
-        foto=foto_salva
+        nome=dados.get('nome'),
+        descricao=dados.get('descricao'),
+        valor=float(dados.get('valor')),
+        foto=foto_salva,
+        categoria=dados.get('categoria')
     )
     db.session.add(novo_item)
     db.session.commit()
@@ -289,9 +286,11 @@ def add_cardapio_item():
 @login_required
 def update_cardapio_item(item_id):
     item = CardapioItem.query.get_or_404(item_id)
-    item.nome = request.form.get('nome')
-    item.descricao = request.form.get('descricao')
-    item.valor = float(request.form.get('valor'))
+    dados = request.form
+    item.nome = dados.get('nome')
+    item.descricao = dados.get('descricao')
+    item.valor = float(dados.get('valor'))
+    item.categoria = dados.get('categoria')
     if 'foto' in request.files:
         arquivo_foto = request.files['foto']
         if arquivo_foto.filename != '':
