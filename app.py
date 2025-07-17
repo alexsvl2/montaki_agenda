@@ -143,7 +143,6 @@ def fazer_pedido(item_id):
 def carrinho():
     return render_template('carrinho.html')
 
-
 # --- APIs ---
 @app.route('/api/tarefas', methods=['GET'])
 @login_required
@@ -257,15 +256,13 @@ def delete_item_receita(item_id):
 @login_required
 def get_cardapio_itens():
     itens = CardapioItem.query.order_by(CardapioItem.nome).all()
-    return jsonify([{'id': i.id, 'nome': i.nome, 'descricao': i.descricao, 'valor': i.valor, 'foto': i.foto, 'ativo': i.ativo} for i in itens])
+    # CORREÇÃO DEFINITIVA AQUI: Adicionando o campo 'categoria'
+    return jsonify([{'id': i.id, 'nome': i.nome, 'descricao': i.descricao, 'valor': i.valor, 'foto': i.foto, 'ativo': i.ativo, 'categoria': i.categoria} for i in itens])
 
 @app.route('/api/cardapio', methods=['POST'])
 @login_required
 def add_cardapio_item():
-    nome = request.form.get('nome')
-    descricao = request.form.get('descricao')
-    valor = request.form.get('valor')
-    categoria = request.form.get('categoria')
+    dados = request.form
     foto_salva = None
     if 'foto' in request.files:
         arquivo_foto = request.files['foto']
@@ -274,11 +271,11 @@ def add_cardapio_item():
             arquivo_foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             foto_salva = filename
     novo_item = CardapioItem(
-        nome=nome,
-        descricao=descricao,
-        valor=float(valor),
+        nome=dados.get('nome'),
+        descricao=dados.get('descricao'),
+        valor=float(dados.get('valor')),
         foto=foto_salva,
-        categoria=categoria
+        categoria=dados.get('categoria')
     )
     db.session.add(novo_item)
     db.session.commit()
@@ -288,10 +285,11 @@ def add_cardapio_item():
 @login_required
 def update_cardapio_item(item_id):
     item = CardapioItem.query.get_or_404(item_id)
-    item.nome = request.form.get('nome')
-    item.descricao = request.form.get('descricao')
-    item.valor = float(request.form.get('valor'))
-    item.categoria = request.form.get('categoria')
+    dados = request.form
+    item.nome = dados.get('nome')
+    item.descricao = dados.get('descricao')
+    item.valor = float(dados.get('valor'))
+    item.categoria = dados.get('categoria')
     if 'foto' in request.files:
         arquivo_foto = request.files['foto']
         if arquivo_foto.filename != '':
