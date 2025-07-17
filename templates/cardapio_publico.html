@@ -21,19 +21,26 @@
             </a>
         </header>
 
-        <main class="cardapio-grid-publico">
-            {% for item in itens %}
-            <div class="item-card-publico">
-                <img src="{{ url_for('static', filename='uploads/' + item.foto if item.foto else 'https://via.placeholder.com/400x300.png?text=Montaki') }}" alt="{{ item.nome }}" class="item-photo-publico">
-                <div class="item-details-publico">
-                    <h3>{{ item.nome }}</h3>
-                    <p>{{ item.descricao }}</p>
-                    <div class="item-footer-publico">
-                        <span class="item-price-publico">R$ {{ "%.2f"|format(item.valor|float) }}</span>
-                        <button class="btn-pedir" data-id="{{ item.id }}" data-nome="{{ item.nome }}" data-valor="{{ item.valor }}">Pedir</button>
+        <main>
+            {% for categoria, itens_da_categoria in cardapio_agrupado.items() %}
+                <div class="category-section">
+                    <h2 class="category-title">{{ categoria }}</h2>
+                    <div class="cardapio-grid-publico">
+                        {% for item in itens_da_categoria %}
+                        <div class="item-card-publico">
+                            <img src="{{ url_for('static', filename='uploads/' + item.foto if item.foto else 'https://via.placeholder.com/400x300.png?text=Montaki') }}" alt="{{ item.nome }}" class="item-photo-publico">
+                            <div class="item-details-publico">
+                                <h3>{{ item.nome }}</h3>
+                                <p>{{ item.descricao }}</p>
+                                <div class="item-footer-publico">
+                                    <span class="item-price-publico">R$ {{ "%.2f"|format(item.valor|float) }}</span>
+                                    <button class="btn-pedir" data-id="{{ item.id }}" data-nome="{{ item.nome }}" data-valor="{{ item.valor }}">Pedir</button>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
                 </div>
-            </div>
             {% endfor %}
         </main>
 
