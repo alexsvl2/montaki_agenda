@@ -139,6 +139,11 @@ def fazer_pedido(item_id):
     item = CardapioItem.query.get_or_404(item_id)
     return render_template('fazer_pedido.html', item=item)
 
+@app.route('/carrinho')
+def carrinho():
+    return render_template('carrinho.html')
+
+
 # --- APIs ---
 @app.route('/api/tarefas', methods=['GET'])
 @login_required
@@ -181,13 +186,7 @@ def delete_tarefa(tarefa_id):
 @login_required
 def get_ingredientes():
     ingredientes = Ingrediente.query.order_by(Ingrediente.nome).all()
-    return jsonify([{'id': ing.id, 
-                     'nome': ing.nome, 
-                     'preco_pacote': ing.preco_pacote, 
-                     'quantidade_pacote': ing.quantidade_pacote, 
-                     'unidade_medida': ing.unidade_medida, 
-                     'custo_unitario_base': ing.custo_unitario_base
-                    } for ing in ingredientes])
+    return jsonify([{'id': ing.id, 'nome': ing.nome, 'unidade_medida': ing.unidade_medida} for ing in ingredientes])
 
 @app.route('/api/ingredientes', methods=['POST'])
 @login_required
@@ -253,7 +252,7 @@ def delete_item_receita(item_id):
     db.session.commit()
     produto.calcular_custo_total()
     return jsonify({'status': 'sucesso'})
-    
+
 @app.route('/api/cardapio', methods=['GET'])
 @login_required
 def get_cardapio_itens():
@@ -263,7 +262,10 @@ def get_cardapio_itens():
 @app.route('/api/cardapio', methods=['POST'])
 @login_required
 def add_cardapio_item():
-    dados = request.form
+    nome = request.form.get('nome')
+    descricao = request.form.get('descricao')
+    valor = request.form.get('valor')
+    categoria = request.form.get('categoria')
     foto_salva = None
     if 'foto' in request.files:
         arquivo_foto = request.files['foto']
@@ -272,11 +274,11 @@ def add_cardapio_item():
             arquivo_foto.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             foto_salva = filename
     novo_item = CardapioItem(
-        nome=dados.get('nome'),
-        descricao=dados.get('descricao'),
-        valor=float(dados.get('valor')),
+        nome=nome,
+        descricao=descricao,
+        valor=float(valor),
         foto=foto_salva,
-        categoria=dados.get('categoria')
+        categoria=categoria
     )
     db.session.add(novo_item)
     db.session.commit()
@@ -286,11 +288,10 @@ def add_cardapio_item():
 @login_required
 def update_cardapio_item(item_id):
     item = CardapioItem.query.get_or_404(item_id)
-    dados = request.form
-    item.nome = dados.get('nome')
-    item.descricao = dados.get('descricao')
-    item.valor = float(dados.get('valor'))
-    item.categoria = dados.get('categoria')
+    item.nome = request.form.get('nome')
+    item.descricao = request.form.get('descricao')
+    item.valor = float(request.form.get('valor'))
+    item.categoria = request.form.get('categoria')
     if 'foto' in request.files:
         arquivo_foto = request.files['foto']
         if arquivo_foto.filename != '':
@@ -315,7 +316,7 @@ def delete_cardapio_item(item_id):
     db.session.delete(item)
     db.session.commit()
     return jsonify({'status': 'sucesso'})
-
+    
 # --- Comandos de Terminal ---
 @app.cli.command('create-db')
 def create_db():
