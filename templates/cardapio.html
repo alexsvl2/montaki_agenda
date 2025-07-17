@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cardápio - Montaki Confeitaria</title>
+    <title>Gerenciar Cardápio - Montaki Confeitaria</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
@@ -20,9 +20,9 @@
 
         <main class="content-wrapper">
             <div class="page-actions">
-                <button id="btn-add-item" class="button-primary"><i class="fas fa-plus"></i> Adicionar Item</button>
+                <button id="btn-add-item" class="button-primary"><i class="fas fa-plus"></i> Adicionar Item ao Cardápio</button>
                 <a href="{{ url_for('cardapio_publico') }}" target="_blank" class="button-secondary">
-                    <i class="fas fa-share-square"></i> Ver Cardápio Público
+                    <i class="fas fa-eye"></i> Ver Cardápio Público
                 </a>
             </div>
             
@@ -45,6 +45,16 @@
                         <input type="text" id="item-nome" name="nome" required>
                     </div>
                     <div class="form-group">
+                        <label for="item-categoria">Categoria</label>
+                        <select id="item-categoria" name="categoria" required>
+                            <option value="Bolos Recheados">Bolos Recheados</option>
+                            <option value="Copo da Felicidade">Copo da Felicidade</option>
+                            <option value="Tortas">Tortas</option>
+                            <option value="Bolos Caseiros">Bolos Caseiros</option>
+                            <option value="Doces Artesanais">Doces Artesanais</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label for="item-descricao">Descrição</label>
                         <textarea id="item-descricao" name="descricao" rows="3" required></textarea>
                     </div>
@@ -52,13 +62,13 @@
                         <label for="item-valor">Valor (R$)</label>
                         <input type="number" id="item-valor" name="valor" step="0.01" required>
                     </div>
-                    <div id="foto-atual-container" style="display: none;">
-                        <label>Foto Atual:</label>
-                        <img id="foto-atual-img" src="" alt="Foto Atual" style="max-width: 100px; max-height: 100px; display: block; margin-bottom: 10px;">
-                    </div>
                     <div class="form-group">
-                        <label for="item-foto">Nova Foto (opcional)</label>
+                        <label for="item-foto">Foto do Produto</label>
                         <input type="file" id="item-foto" name="foto" accept="image/*">
+                        <div id="foto-atual-container" style="display: none; margin-top: 10px;">
+                            <label>Foto Atual:</label>
+                            <img id="foto-atual-img" src="" alt="Foto Atual" style="max-width: 100px; border-radius: 5px;">
+                        </div>
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="button-primary">Salvar</button>
